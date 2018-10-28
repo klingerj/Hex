@@ -3,6 +3,7 @@ Hex/Saved
 *.VC.db
 *.VC.opendb
 *.ipch
+*.suo
 Hex/Content/StarterContent/
 Hex/Binaries/
 Hex/.vs/Hex/v15/ipch/
