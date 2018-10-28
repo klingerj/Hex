@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "HexGridTileEffect.h"
 #include "HexGridTile.generated.h"
 
 UCLASS()
@@ -23,6 +24,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Components
+  UHexGridTileEffect* hexGridTileEffect;
 	
-	
+  // Blueprint variables
+  int32 gridIndexX, gridIndexY;
+
+  UFUNCTION(BlueprintCallable, Category = "Setup")
+  void SetGridIndex();
 };

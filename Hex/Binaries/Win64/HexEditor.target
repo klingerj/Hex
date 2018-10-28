@@ -16,11 +16,11 @@
 	},
 	"BuildProducts": [
 		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-Hex-5703.dll",
+			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-Hex-6352.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-Hex-5703.pdb",
+			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-Hex-6352.pdb",
 			"Type": "SymbolFile"
 		},
 		{
