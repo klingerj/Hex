@@ -35,11 +35,11 @@ void AGameManager::BeginPlay()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
-		FVector spawn(rand() % 500, rand() % 500, 0.0f);
+		FVector spawn(rand() % 500, rand() % 500, 10.0f);
 
 		playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-		spawn = FVector(rand() % 100, rand() % 100, 0.0f);
+		spawn = FVector(rand() % 100, rand() % 100, 10.0f);
 		playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 	}
 
