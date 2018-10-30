@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "HexGridTileEffect.h"
-#include "HexGridTile.generated.h"
+#include "HexGridGraphManager.generated.h"
 
 UCLASS()
-class HEX_API AHexGridTile : public AActor
+class HEX_API AHexGridGraphManager : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AHexGridTile();
+	AHexGridGraphManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,12 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Components
-  UHexGridTileEffect* hexGridTileEffect;
-	
-  // Blueprint variables
-  uint32 gridIndexX, gridIndexY;
+  int* adjacencyMatrix;
 
-  UFUNCTION(BlueprintCallable, Category = "Setup")
-  void SetGridIndex();
+  UFUNCTION(BlueprintCallable, Category = "Adjacency Matrix")
+  void PopulateAdjacencyMatrix();
 };
