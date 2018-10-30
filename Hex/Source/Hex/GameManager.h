@@ -22,12 +22,14 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	TSubclassOf<class AWizard> WizClass;
 
+	// Players in the battle
 	AWizard *playerOne, *playerTwo;
-	AWizard* turnPlayer;
+	// Set this as turns go on to apply effects to the AWizard whose turn it is
+	AWizard *turnPlayer, *otherPlayer;
 
 	bool turn;
 	enum TurnStage { ApplyEffects = 0, Cast = 1, Craft = 2, Move = 3, End = 4, Listening = 5 };
-	TurnStage currentStage;
 
 };

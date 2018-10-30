@@ -28,10 +28,10 @@ public:
 
 	/// GAMEPLAY FUNCTIONS
 	void applyTileEffects();
-	void castSpell(int spell);
-	void craftSpell(int resource1, int resource2, int resource3);
-	void move(int tile);
-	AGameManager::TurnStage readInput();
+	void castSpell();
+	void craftSpell();
+	void move();
+	void endTurn();
 
 	/// STATE VARIABLES
 	enum WizardClass { AllAround = 0, Tank = 1, Scout = 2, BuffDebuff = 3, GlassCannon = 4 };
@@ -39,4 +39,10 @@ public:
 	int health, speed;
 	// Max stats
 	int maxHealth, originalSpeed;
+	// Track if certain actions have been taken
+	bool hasCast, hasCrafted, hasMoved;
+	AGameManager::TurnStage currentStage;
+
+	AWizard* other;
+	AGameManager* gm;
 };
