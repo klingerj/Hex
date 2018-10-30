@@ -24,7 +24,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
   int* adjacencyMatrix;
+  int* distances;
 
   UFUNCTION(BlueprintCallable, Category = "Adjacency Matrix")
   void PopulateAdjacencyMatrix();
+  
+  // https://www.coderslexicon.com/dijkstras-algorithm-for-c/
+  void DjikstraLoop();
+  void Djikstra(int* vertices);
 };

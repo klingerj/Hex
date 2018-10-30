@@ -30,6 +30,9 @@ public:
   // Blueprint variables
   uint32 gridIndexX, gridIndexY;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Djikstra")
+  int distanceToMove;
+
   UFUNCTION(BlueprintCallable, Category = "Setup")
   void SetGridIndex();
 };

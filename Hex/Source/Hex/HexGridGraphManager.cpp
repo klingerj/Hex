@@ -36,6 +36,7 @@ uint32 Index2DTo1D(uint32 x, uint32 y, uint32 dim) {
 void AHexGridGraphManager::PopulateAdjacencyMatrix() {
     // todo: need to get dimension of the grid
     uint32 dim = 3;
+    UE_LOG(LogClass, Log, TEXT("Top of populate adjacency matrix!!"));
 
     adjacencyMatrix = new int[dim*dim*dim*dim];
     for (uint32 i = 0; i < dim*dim*dim*dim; ++i) {
@@ -130,5 +131,79 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
         for (uint32 i = 0; i < dim*dim; ++i) {
             UE_LOG(LogClass, Log, TEXT("Row %d: %d, %d, %d, %d, %d, %d, %d, %d, %d"), i, adjacencyMatrix[Index2DTo1D(0, i, dim*dim)], adjacencyMatrix[Index2DTo1D(1, i, dim*dim)], adjacencyMatrix[Index2DTo1D(2, i, dim*dim)], adjacencyMatrix[Index2DTo1D(3, i, dim*dim)], adjacencyMatrix[Index2DTo1D(4, i, dim*dim)], adjacencyMatrix[Index2DTo1D(5, i, dim*dim)], adjacencyMatrix[Index2DTo1D(6, i, dim*dim)], adjacencyMatrix[Index2DTo1D(7, i, dim*dim)], adjacencyMatrix[Index2DTo1D(8, i, dim*dim)]);
         }
+    }
+    distances = new int[dim * dim];
+    DjikstraLoop();
+}
+
+void AHexGridGraphManager::DjikstraLoop() {
+    constexpr uint32 dim = 3;
+
+    AHexGridTile* gridPtrs[dim*dim];
+    int vertices[dim*dim];
+
+    int j = 0;
+    for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+        gridPtrs[j] = *actorIter;
+        ++j;
+    }
+    for (int i = 0; i < dim*dim; i++) {
+        vertices[i] = i;
+    }
+
+    vertices[0] = -1;
+    distances[0] = 0;
+
+    for (int i = 1; i < dim*dim; i++) {
+        UE_LOG(LogClass, Log, TEXT("1D Index: %d"), Index2DTo1D(i, 0, dim*dim));
+        distances[i] = adjacencyMatrix[Index2DTo1D(i, 0, dim*dim)];
+    }
+    UE_LOG(LogClass, Log, TEXT("Distances: "));
+    for (uint32 i = 0; i < dim*dim; ++i) {
+        UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
+    }
+    for (int currDim = 0; currDim < dim*dim; currDim++) {
+        Djikstra(vertices);
+        UE_LOG(LogClass, Log, TEXT("Distances: "));
+        for (uint32 i = 0; i < dim*dim; ++i) {
+            UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
+        }
+    }
+    for (int i = 0; i < dim*dim; i++) {
+        gridPtrs[i]->distanceToMove = distances[i];
+    }
+}
+
+void AHexGridGraphManager::Djikstra(int* vertices) {
+    constexpr uint32 dim = 3;
+    int minValue = 500;
+    int minNode = 0;
+
+    for (int i = 0; i < dim*dim; i++) {
+        if (vertices[i] == -1) { continue; }
+        if (distances[i] > 0 && distances[i] < minValue) {
+            minValue = distances[i];
+            minNode = i;
+        }
+    }
+    UE_LOG(LogClass, Log, TEXT("Minvalue: %d"), minValue);
+    UE_LOG(LogClass, Log, TEXT("minNode: %d"), minNode);
+
+    vertices[minNode] = -1;
+
+    for (int i = 0; i < dim*dim; i++) {
+        UE_LOG(LogClass, Log, TEXT("Index 1D: %d"), Index2DTo1D(i, minNode, dim*dim));
+        if (adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)] < 0) { continue; }
+        if (distances[i] < 0) {
+            distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
+            continue;
+        }
+        if ((distances[minNode] + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)]) < distances[i]) {
+            distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
+        }
+        /*UE_LOG(LogClass, Log, TEXT("Distances: "));
+        for (uint32 i = 0; i < dim*dim; ++i) {
+            UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
+        }*/
     }
 }
