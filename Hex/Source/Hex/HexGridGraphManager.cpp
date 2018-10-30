@@ -101,7 +101,7 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
                 adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX - 1, actor->gridIndexY, dim)] = 1;
                 adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX + 1, actor->gridIndexY, dim)] = 1;
                 adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX - 1, actor->gridIndexY + 1, dim)] = 1;
-                adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX + 1, actor->gridIndexY + 1, dim)] = 1;
+                adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX, actor->gridIndexY + 1, dim)] = 1;
             }
         } else if (actor->gridIndexY == (uint32)(dim - 1)) { // bottom wall minus corners
             if (actor->gridIndexX > (uint32)0 && actor->gridIndexX < (uint32)(dim - 1)) {
@@ -147,8 +147,8 @@ void AHexGridGraphManager::DjikstraLoop() {
     for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
         gridTiles.push_back(*actorIter);
     }
-    std::sort(gridTiles.begin(), gridTiles.end(), [](const auto& lhs, const auto& rhs) {
-        return lhs->id < rhs->id;
+    std::sort(gridTiles.begin(), gridTiles.end(), [](const AHexGridTile* lhs, const AHexGridTile* rhs) {
+        return lhs->ID < rhs->ID;
     });
     for (size_t i = 0; i < gridTiles.size(); i++) {
         gridPtrs[i] = gridTiles[i];

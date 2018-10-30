@@ -29,7 +29,7 @@ public:
 	
   // Blueprint variables
   uint32 gridIndexX, gridIndexY;
-  uint32 ID;
+  int32 ID;
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Djikstra")
   int distanceToMove;
