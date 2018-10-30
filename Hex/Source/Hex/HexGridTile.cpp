@@ -31,15 +31,19 @@ void AHexGridTile::SetGridIndex() {
     // Taken from: https://answers.unrealengine.com/questions/161741/accessing-blueprint-variables-through-c.html
     static const FName gridIndexX_BP(TEXT("gridIndexX"));
     static const FName gridIndexY_BP(TEXT("gridIndexY"));
+    static const FName ID_BP(TEXT("ID"));
 
     UClass* MyClass = GetClass();
     for (UProperty* Property = MyClass->PropertyLink; Property; Property = Property->PropertyLinkNext) {
-        UIntProperty* gridIndexProperty = Cast<UIntProperty>(Property);
-        if (gridIndexProperty && Property->GetFName() == gridIndexX_BP) {
-            gridIndexX = gridIndexProperty->GetPropertyValue(Property->ContainerPtrToValuePtr<int32>(this));
+        UIntProperty* property = Cast<UIntProperty>(Property);
+        if (property && Property->GetFName() == gridIndexX_BP) {
+            gridIndexX = property->GetPropertyValue(Property->ContainerPtrToValuePtr<int32>(this));
         }
-        if (gridIndexProperty && Property->GetFName() == gridIndexY_BP) {
-            gridIndexY = gridIndexProperty->GetPropertyValue(Property->ContainerPtrToValuePtr<int32>(this));
+        if (property && Property->GetFName() == gridIndexY_BP) {
+            gridIndexY = property->GetPropertyValue(Property->ContainerPtrToValuePtr<int32>(this));
+        }
+        if (property && Property->GetFName() == ID_BP) {
+            ID = property->GetPropertyValue(Property->ContainerPtrToValuePtr<int32>(this));
         }
     }
     

@@ -5,7 +5,8 @@
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "HexGridTile.h"
-
+#include <vector>
+#include <algorithm>
 
 // Sets default values
 AHexGridGraphManager::AHexGridGraphManager() : adjacencyMatrix(nullptr)
@@ -139,14 +140,20 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
 void AHexGridGraphManager::DjikstraLoop() {
     constexpr uint32 dim = 3;
 
+    std::vector<AHexGridTile*> gridTiles;
     AHexGridTile* gridPtrs[dim*dim];
     int vertices[dim*dim];
 
-    int j = 0;
     for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
-        gridPtrs[j] = *actorIter;
-        ++j;
+        gridTiles.push_back(*actorIter);
     }
+    std::sort(gridTiles.begin(), gridTiles.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs->id < rhs->id;
+    });
+    for (size_t i = 0; i < gridTiles.size(); i++) {
+        gridPtrs[i] = gridTiles[i];
+    }
+
     for (int i = 0; i < dim*dim; i++) {
         vertices[i] = i;
     }
