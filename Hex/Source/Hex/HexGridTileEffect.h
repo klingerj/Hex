@@ -6,6 +6,15 @@
 #include "Components/ActorComponent.h"
 #include "HexGridTileEffect.generated.h"
 
+enum TileElementType  { Element_Fire, Element_Water, Element_Earth, Element_Air };
+enum TileFunctionType { Function_ResourceYield, Function_PassiveEffect };
+enum TileYieldType { Resource_One, Resource_Two, PassiveEffect_One, PassiveEffect_Two };
+
+typedef struct tile_yield_t {
+    TileElementType element;
+    TileYieldType yield;
+    uint32 quantity;
+} TileYield;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HEX_API UHexGridTileEffect : public UActorComponent
@@ -24,6 +33,25 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
-	
+  // Tile resource
+  TileYield Yield();
+  TileElementType element;
+  TileYieldType yield;
+  uint32 yieldQuantity;
+
+  // Cooldown logic
+  uint32 maxCooldownTurns;
+  uint32 remainingCooldownTurns;
+  void ResetCooldown();
+  bool IsOnCooldown() const;
+  void AdvanceCooldown();
+
+  // Usage (by some global class)
+  /*
+  for each tile
+    yield = tile.yield
+    switch(yield)
+    if yield is a resource: add to the inventory
+    if yield is a passive effect: add to the list of active effects
+  */
 };
