@@ -1,5 +1,6 @@
 #include "Wizard.h"
 #include "Components/InputComponent.h"
+#include "Engine/World.h"
 
 // Default constructor required; if nothing chosen for some reason, choose All-Around build
 AWizard::AWizard() : AWizard(0) {}
@@ -9,6 +10,9 @@ AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(fa
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// This is getting set to true for some reason?
+	this->SetActorHiddenInGame(false);
 
 	// Possession (not sure how this works with multiplayer?)
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -49,11 +53,23 @@ AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(fa
 void AWizard::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Spawn the inventory
+	UWorld* const World = GetWorld();
+	if (World) {
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = Instigator;
+		FVector spawn(0, 0, 0);
+
+		inventory = World->SpawnActor<AInventory>(InvClass, spawn, FRotator(0.0f));
+	}
 }
 
 // Called every frame
 void AWizard::Tick(float DeltaTime)
 {
+	this->SetActorHiddenInGame(false);
 	Super::Tick(DeltaTime);
 }
 
@@ -74,6 +90,13 @@ void AWizard::applyTileEffects() {
 	if (hasMoved) {
 		return;
 	}
+
+	// TODO: Implement the following
+	// Tile currentTile = getCurrentTile();
+	// if (!currentTile.isOnCooldown) {
+		// std::vector<Resources> res = currentTile.collectResources();
+		// inventory->addResources(res); // This call could also be in collectResources(), but this ensures we add to the proper wizard's inventory
+	// }
 
 	UE_LOG(LogClass, Log, TEXT("EFFECTS"));
 

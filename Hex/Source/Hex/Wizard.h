@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameManager.h"
+#include "Inventory.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
@@ -39,9 +40,12 @@ public:
 	int health, speed;
 	// Max stats
 	int maxHealth, originalSpeed;
-	// Track if certain actions have been taken
+	// Track if certain actions have been taken and what stage of the turn we're in
 	bool hasCast, hasCrafted, hasMoved;
 	AGameManager::TurnStage currentStage;
+	// Maintain an inventory of collected resources
+	AInventory* inventory;
+	TSubclassOf<class AInventory> InvClass;
 
 	AWizard* other;
 	AGameManager* gm;
