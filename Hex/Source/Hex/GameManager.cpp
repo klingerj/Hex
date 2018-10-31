@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "Wizard.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "UObject/ConstructorHelpers.h"
 #include <ctime>
 #include <iostream>
@@ -35,12 +36,28 @@ void AGameManager::BeginPlay()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
-		FVector spawn(rand() % 500, rand() % 500, 10.0f);
+
+		FVector spawn(500, 500, 20.0f);
 
 		playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-		spawn = FVector(rand() % 100, rand() % 100, 10.0f);
+		spawn = FVector(100, 100, 20.0f);
 		playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+
+    uint32 playerOneGridIndexX = 0;
+    uint32 playerOneGridIndexY = 0;
+    uint32 playerTwoGridIndexX = 10;
+    uint32 playerTwoGridIndexY = 10;
+
+    for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+        if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
+            playerOne->currentTile = *actorIter;
+        } else if ((*actorIter)->gridIndexX == playerTwoGridIndexX && (*actorIter)->gridIndexY == playerTwoGridIndexY) {
+            playerTwo->currentTile = *actorIter;
+        }
+    }
+    playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+    playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
 	}
 
 	playerOne->other = playerTwo;
@@ -63,7 +80,7 @@ void AGameManager::BeginPlay()
 void AGameManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+  playerTwo->SetActorHiddenInGame(false); // idk why we have to do this
 	turnPlayer = (turn) ? (playerTwo) : (playerOne);
 	otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
@@ -114,4 +131,12 @@ void AGameManager::Tick(float DeltaTime)
 			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
+}
+
+int32 AGameManager::GetStage() const {
+    return turnPlayer->currentStage;
+}
+
+AHexGridTile* AGameManager::GetTurnPlayerTile() const {
+    return turnPlayer->currentTile;
 }

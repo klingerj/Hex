@@ -48,12 +48,6 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
         AHexGridTile* actor = *actorIter;
         uint32 index1D = Index2DTo1D(actor->gridIndexX, actor->gridIndexY, dim);
 
-        UE_LOG(LogClass, Log, TEXT("Current Actor's Indices: (%d, %d) which has a 1D index of %d"), actor->gridIndexX, actor->gridIndexY, index1D);
-        UE_LOG(LogClass, Log, TEXT("Adjacency Matrix Before: "));
-        for (uint32 i = 0; i < dim*dim; ++i) {
-            UE_LOG(LogClass, Log, TEXT("Row %d: %d, %d, %d, %d, %d, %d, %d, %d, %d"), i, adjacencyMatrix[Index2DTo1D(0, i, dim*dim)], adjacencyMatrix[Index2DTo1D(1, i, dim*dim)], adjacencyMatrix[Index2DTo1D(2, i, dim*dim)], adjacencyMatrix[Index2DTo1D(3, i, dim*dim)], adjacencyMatrix[Index2DTo1D(4, i, dim*dim)], adjacencyMatrix[Index2DTo1D(5, i, dim*dim)], adjacencyMatrix[Index2DTo1D(6, i, dim*dim)], adjacencyMatrix[Index2DTo1D(7, i, dim*dim)], adjacencyMatrix[Index2DTo1D(8, i, dim*dim)]);
-        }
-        UE_LOG(LogClass, Log, TEXT("Adjacency Matrix Before: "));
         if (actor->gridIndexX == (uint32)0) { // left wall
             if (actor->gridIndexY == (uint32)0) {
                 adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX + 1, actor->gridIndexY, dim)] = 1;
@@ -127,11 +121,6 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
                 adjacencyMatrix[index1D * dim*dim + Index2DTo1D(actor->gridIndexX + 1, actor->gridIndexY + 1, dim)] = 1;
             }
         }
-
-        UE_LOG(LogClass, Log, TEXT("Adjacency Matrix After: "));
-        for (uint32 i = 0; i < dim*dim; ++i) {
-            UE_LOG(LogClass, Log, TEXT("Row %d: %d, %d, %d, %d, %d, %d, %d, %d, %d"), i, adjacencyMatrix[Index2DTo1D(0, i, dim*dim)], adjacencyMatrix[Index2DTo1D(1, i, dim*dim)], adjacencyMatrix[Index2DTo1D(2, i, dim*dim)], adjacencyMatrix[Index2DTo1D(3, i, dim*dim)], adjacencyMatrix[Index2DTo1D(4, i, dim*dim)], adjacencyMatrix[Index2DTo1D(5, i, dim*dim)], adjacencyMatrix[Index2DTo1D(6, i, dim*dim)], adjacencyMatrix[Index2DTo1D(7, i, dim*dim)], adjacencyMatrix[Index2DTo1D(8, i, dim*dim)]);
-        }
     }
     distances = new int[dim * dim];
     DjikstraLoop();
@@ -158,23 +147,14 @@ void AHexGridGraphManager::DjikstraLoop() {
         vertices[i] = i;
     }
 
-    vertices[0] = -1;
+    vertices[0] = -1; // this is the source vertex
     distances[0] = 0;
 
     for (int i = 1; i < dim*dim; i++) {
-        UE_LOG(LogClass, Log, TEXT("1D Index: %d"), Index2DTo1D(i, 0, dim*dim));
         distances[i] = adjacencyMatrix[Index2DTo1D(i, 0, dim*dim)];
-    }
-    UE_LOG(LogClass, Log, TEXT("Distances: "));
-    for (uint32 i = 0; i < dim*dim; ++i) {
-        UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
     }
     for (int currDim = 0; currDim < dim*dim; currDim++) {
         Djikstra(vertices);
-        UE_LOG(LogClass, Log, TEXT("Distances: "));
-        for (uint32 i = 0; i < dim*dim; ++i) {
-            UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
-        }
     }
     for (int i = 0; i < dim*dim; i++) {
         gridPtrs[i]->distanceToMove = distances[i];
@@ -193,13 +173,10 @@ void AHexGridGraphManager::Djikstra(int* vertices) {
             minNode = i;
         }
     }
-    UE_LOG(LogClass, Log, TEXT("Minvalue: %d"), minValue);
-    UE_LOG(LogClass, Log, TEXT("minNode: %d"), minNode);
 
     vertices[minNode] = -1;
 
     for (int i = 0; i < dim*dim; i++) {
-        UE_LOG(LogClass, Log, TEXT("Index 1D: %d"), Index2DTo1D(i, minNode, dim*dim));
         if (adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)] < 0) { continue; }
         if (distances[i] < 0) {
             distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
@@ -208,9 +185,5 @@ void AHexGridGraphManager::Djikstra(int* vertices) {
         if ((distances[minNode] + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)]) < distances[i]) {
             distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
         }
-        /*UE_LOG(LogClass, Log, TEXT("Distances: "));
-        for (uint32 i = 0; i < dim*dim; ++i) {
-            UE_LOG(LogClass, Log, TEXT("%d"), distances[i]);
-        }*/
     }
 }
