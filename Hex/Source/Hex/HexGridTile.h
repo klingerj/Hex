@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <set>
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "HexGridTileEffect.h"
@@ -27,6 +28,15 @@ public:
 	// Components
   UHexGridTileEffect* hexGridTileEffect;
 	
+  // Djikstra-related
+  std::set<AHexGridTile*> prevNodes;
+  void AddPrevNode_Djikstra(AHexGridTile* node);
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Djikstra")
+  bool onShortestPath;
+
+  void ClearPrevNodes();
+
   // Blueprint variables
   uint32 gridIndexX, gridIndexY;
   int32 ID;

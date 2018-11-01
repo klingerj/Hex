@@ -1,7 +1,9 @@
 #include "GameManager.h"
 #include "Wizard.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "UObject/ConstructorHelpers.h"
+#include "HexGridGraphManager.h"
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -22,55 +24,73 @@ AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlaye
 void AGameManager::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-	// Seed RNG with current time
-	srand(time(nullptr));
-	// Randomize who goes first
-		// turn == 0 => Player0 goes first
-	turn = (rand() / RAND_MAX) > 0.5;
+void AGameManager::Setup() {
+    // Seed RNG with current time
+    srand(time(nullptr));
+    // Randomize who goes first
+      // turn == 0 => Player0 goes first
+    turn = (rand() / RAND_MAX) > 0.5;
 
-	// Spawn two wizards
-	UWorld* const World = GetWorld();
-	if (World) {
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = Instigator;
-		FVector spawn(rand() % 500, rand() % 500, 10.0f);
+    // Spawn two wizards
+    UWorld* const World = GetWorld();
+    if (World) {
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+        SpawnParams.Instigator = Instigator;
 
-		playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+        FVector spawn(500, 500, 20.0f);
 
-		spawn = FVector(rand() % 100, rand() % 100, 10.0f);
-		playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
-	}
+        playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-	playerOne->other = playerTwo;
-	playerTwo->other = playerOne;
+        spawn = FVector(100, 100, 20.0f);
+        playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-	playerOne->gm = this;
-	playerTwo->gm = this;
+        uint32 playerOneGridIndexX = 0;
+        uint32 playerOneGridIndexY = 0;
+        uint32 playerTwoGridIndexX = 10;
+        uint32 playerTwoGridIndexY = 10;
 
-	turnPlayer = (turn) ? (playerTwo) : (playerOne);
-	otherPlayer = (!turn) ? (playerTwo) : (playerOne);
+        for (TActorIterator<AHexGridTile> actorIter(World); actorIter; ++actorIter) {
+            if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
+                playerOne->currentTile = *actorIter;
+            }
+            else if ((*actorIter)->gridIndexX == playerTwoGridIndexX && (*actorIter)->gridIndexY == playerTwoGridIndexY) {
+                playerTwo->currentTile = *actorIter;
+            }
+        }
+        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+    }
 
+    playerOne->other = playerTwo;
+    playerTwo->other = playerOne;
 
-	//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
-	//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
+    playerOne->gm = this;
+    playerTwo->gm = this;
 
-	turnPlayer->applyTileEffects();
+    turnPlayer = (turn) ? (playerTwo) : (playerOne);
+    otherPlayer = (!turn) ? (playerTwo) : (playerOne);
+
+    //turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
+    //otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
+
+    turnPlayer->applyTileEffects();
 }
 
 // Called every frame
 void AGameManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+  playerTwo->SetActorHiddenInGame(false); // idk why we have to do this
 	turnPlayer = (turn) ? (playerTwo) : (playerOne);
 	otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
 	//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 	//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
 
-	UE_LOG(LogClass, Log, TEXT("Player One: %d ; PlayerTwo: %d ; TurnPlayer is %d"), playerOne->currentStage, playerTwo->currentStage, int(turn) + 1);
+	//UE_LOG(LogClass, Log, TEXT("Player One: %d ; PlayerTwo: %d ; TurnPlayer is %d"), playerOne->currentStage, playerTwo->currentStage, int(turn) + 1);
 
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
@@ -90,9 +110,13 @@ void AGameManager::Tick(float DeltaTime)
 			break;
 
 		case TurnStage::Move:
-			UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+		  UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
 			break;
+    
+    case TurnStage::MoveEnd:
+      UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+      turnPlayer->currentStage = TurnStage::Listening;
+      break;
 
 		case TurnStage::End:
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
@@ -101,11 +125,12 @@ void AGameManager::Tick(float DeltaTime)
 
 			turnPlayer = (turn) ? (playerTwo) : (playerOne);
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
+      RecomputeDjikstra();
 
 			//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 			//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
 
-			UE_LOG(LogClass, Log, TEXT("Beginning turn for Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Beginning turn for Player %d"), int(turn) + 1);
 
 			turnPlayer->currentStage = TurnStage::ApplyEffects;
 			break;
@@ -114,4 +139,30 @@ void AGameManager::Tick(float DeltaTime)
 			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
+}
+
+int32 AGameManager::GetStage() const {
+    return turnPlayer->currentStage;
+}
+
+AHexGridTile* AGameManager::GetTurnPlayerTile() const {
+    return turnPlayer->currentTile;
+}
+
+void AGameManager::SetTurnPlayerTile(AHexGridTile* targetMoveTile) {
+    turnPlayer->currentTile = targetMoveTile;
+    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation() + FVector(0.f, 0.f, 20.f));
+    turnPlayer->currentStage = TurnStage::MoveEnd;
+}
+
+void AGameManager::RecomputeDjikstra() {
+    for (TActorIterator<AHexGridGraphManager> actorIter(GetWorld()); actorIter; ++actorIter) {
+        for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+            (*actorIter)->ClearPrevNodes();
+        }
+        (*actorIter)->SetSourceTileID(turnPlayer->currentTile->ID);
+        (*actorIter)->ResetShortestPath();
+        (*actorIter)->DjikstraLoop();
+        (*actorIter)->SetShortestPath_Backwards(turnPlayer->currentTile);
+    }
 }

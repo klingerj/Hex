@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "HexGridTile.h"
 #include "Wizard.generated.h"
 
 UCLASS()
@@ -45,4 +46,5 @@ public:
 
 	AWizard* other;
 	AGameManager* gm;
+  AHexGridTile* currentTile; // the tile that the wizard is currently standing on
 };
