@@ -46,8 +46,8 @@ void AGameManager::BeginPlay()
 
     uint32 playerOneGridIndexX = 0;
     uint32 playerOneGridIndexY = 0;
-    uint32 playerTwoGridIndexX = 10;
-    uint32 playerTwoGridIndexY = 10;
+    uint32 playerTwoGridIndexX = 2;
+    uint32 playerTwoGridIndexY = 2;
 
     for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
         if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
@@ -87,32 +87,36 @@ void AGameManager::Tick(float DeltaTime)
 	//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 	//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
 
-	UE_LOG(LogClass, Log, TEXT("Player One: %d ; PlayerTwo: %d ; TurnPlayer is %d"), playerOne->currentStage, playerTwo->currentStage, int(turn) + 1);
+	//UE_LOG(LogClass, Log, TEXT("Player One: %d ; PlayerTwo: %d ; TurnPlayer is %d"), playerOne->currentStage, playerTwo->currentStage, int(turn) + 1);
 
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
 		case TurnStage::ApplyEffects:
-			UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Cast:
-			UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Craft:
-			UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Move:
-			UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+			//UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
 			break;
+    
+    case TurnStage::MoveEnd:
+      //UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+      turnPlayer->currentStage = TurnStage::Listening;
+      break;
 
 		case TurnStage::End:
-			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
 			turn = !turn;
 
@@ -122,13 +126,13 @@ void AGameManager::Tick(float DeltaTime)
 			//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 			//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
 
-			UE_LOG(LogClass, Log, TEXT("Beginning turn for Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Beginning turn for Player %d"), int(turn) + 1);
 
 			turnPlayer->currentStage = TurnStage::ApplyEffects;
 			break;
 
 		case TurnStage::Listening:
-			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
 }
@@ -139,4 +143,10 @@ int32 AGameManager::GetStage() const {
 
 AHexGridTile* AGameManager::GetTurnPlayerTile() const {
     return turnPlayer->currentTile;
+}
+
+void AGameManager::SetTurnPlayerTile(AHexGridTile* targetMoveTile) {
+    turnPlayer->currentTile = targetMoveTile;
+    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation() + FVector(0, 0, 20));
+    turnPlayer->currentStage = TurnStage::MoveEnd;
 }
