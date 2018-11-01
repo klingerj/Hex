@@ -37,7 +37,7 @@ uint32 Index2DTo1D(uint32 x, uint32 y, uint32 dim) {
 
 void AHexGridGraphManager::PopulateAdjacencyMatrix() {
     // todo: need to get dimension of the grid
-    uint32 dim = 3;
+    uint32 dim = 11;
 
     adjacencyMatrix = new int[dim*dim*dim*dim];
     for (uint32 i = 0; i < dim*dim*dim*dim; ++i) {
@@ -139,7 +139,7 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
 }
 
 void AHexGridGraphManager::DjikstraLoop() {
-    constexpr uint32 dim = 3;
+    constexpr uint32 dim = 11;
 
     std::vector<AHexGridTile*> gridTiles;
     AHexGridTile* gridPtrs[dim*dim];
@@ -168,7 +168,7 @@ void AHexGridGraphManager::DjikstraLoop() {
         distances[i] = adjacencyMatrix[Index2DTo1D(i, sourceTileID, dim*dim)];
         if (distances[i] > 0) {
             gridPtrs[i]->AddPrevNode_Djikstra(gridPtrs[sourceTileID]);
-            UE_LOG(LogClass, Log, TEXT("first iter, Adding tile %d as a prev of tile %d"), gridPtrs[sourceTileID]->ID, gridPtrs[i]->ID);
+            //UE_LOG(LogClass, Log, TEXT("first iter, Adding tile %d as a prev of tile %d"), gridPtrs[sourceTileID]->ID, gridPtrs[i]->ID);
         }
     }
     for (int i = 0; i < dim*dim; i++) {
@@ -180,12 +180,10 @@ void AHexGridGraphManager::DjikstraLoop() {
 }
 
 void AHexGridGraphManager::Djikstra(int* vertices, AHexGridTile* tiles[]) {
-    constexpr uint32 dim = 3;
+    constexpr uint32 dim = 11;
     int minValue = 500; // high number
     int minNode = 0;
     int oldMinNode = -1;
-
-    UE_LOG(LogClass, Log, TEXT("Iteration *********"));
 
     for (int i = 0; i < dim*dim; i++) {
         if (vertices[i] == -1) {
@@ -206,17 +204,17 @@ void AHexGridGraphManager::Djikstra(int* vertices, AHexGridTile* tiles[]) {
             distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
             if (tiles[minNode]->ID != tiles[i]->ID) {
                 tiles[i]->AddPrevNode_Djikstra(tiles[minNode]);
-                UE_LOG(LogClass, Log, TEXT("Adding tile %d as a prev of tile %d"), tiles[minNode]->ID, tiles[i]->ID);
+                //UE_LOG(LogClass, Log, TEXT("Adding tile %d as a prev of tile %d"), tiles[minNode]->ID, tiles[i]->ID);
             }
             continue;
         }
         if ((distances[minNode] + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)]) < distances[i]) {
             distances[i] = minValue + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)];
-            UE_LOG(LogClass, Log, TEXT("here"));
+            //UE_LOG(LogClass, Log, TEXT("here"));
         } else if ((distances[minNode] + adjacencyMatrix[Index2DTo1D(i, minNode, dim*dim)]) == distances[i]) {
             if (tiles[minNode]->ID != tiles[i]->ID) {
                 tiles[i]->AddPrevNode_Djikstra(tiles[minNode]);
-                UE_LOG(LogClass, Log, TEXT("Adding tile %d as a prev of tile %d"), tiles[minNode]->ID, tiles[i]->ID);
+                //UE_LOG(LogClass, Log, TEXT("Adding tile %d as a prev of tile %d"), tiles[minNode]->ID, tiles[i]->ID);
             }
         }
     }
@@ -239,11 +237,9 @@ void AHexGridGraphManager::SetShortestPath_Backwards(AHexGridTile* targetTile) {
         return;
     }
     targetTile->onShortestPath = true;
-    UE_LOG(LogClass, Log, TEXT("Traversing for targetTile: %d"), targetTile->ID);
     const std::set<AHexGridTile*>& prevNodes = targetTile->prevNodes;
     for (AHexGridTile* node : prevNodes) {
         SetShortestPath_Backwards(node);
-        UE_LOG(LogClass, Log, TEXT("In loop: targetTile: %d"), node->ID);
     }
 }
 

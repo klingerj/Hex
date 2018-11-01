@@ -35,6 +35,8 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Djikstra")
   bool onShortestPath;
 
+  void ClearPrevNodes();
+
   // Blueprint variables
   uint32 gridIndexX, gridIndexY;
   int32 ID;

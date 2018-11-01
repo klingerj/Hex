@@ -34,6 +34,9 @@ public:
 	enum TurnStage { ApplyEffects = 0, Cast = 1, Craft = 2, Move = 3, End = 4, Listening = 5, MoveEnd = 6 };
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
+  void Setup();
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
   int32 GetStage() const;
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
@@ -41,4 +44,6 @@ public:
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   void SetTurnPlayerTile(AHexGridTile* targetMoveTile);
+
+  void RecomputeDjikstra();
 };

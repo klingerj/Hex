@@ -56,3 +56,7 @@ void AHexGridTile::SetGridIndex() {
 void AHexGridTile::AddPrevNode_Djikstra(AHexGridTile* node) {
     prevNodes.insert(node);
 }
+
+void AHexGridTile::ClearPrevNodes() {
+    prevNodes.clear();
+}

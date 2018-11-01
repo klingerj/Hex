@@ -3,6 +3,7 @@
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "UObject/ConstructorHelpers.h"
+#include "HexGridGraphManager.h"
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -23,57 +24,59 @@ AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlaye
 void AGameManager::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-	// Seed RNG with current time
-	srand(time(nullptr));
-	// Randomize who goes first
-		// turn == 0 => Player0 goes first
-	turn = (rand() / RAND_MAX) > 0.5;
+void AGameManager::Setup() {
+    // Seed RNG with current time
+    srand(time(nullptr));
+    // Randomize who goes first
+      // turn == 0 => Player0 goes first
+    turn = (rand() / RAND_MAX) > 0.5;
 
-	// Spawn two wizards
-	UWorld* const World = GetWorld();
-	if (World) {
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = Instigator;
+    // Spawn two wizards
+    UWorld* const World = GetWorld();
+    if (World) {
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+        SpawnParams.Instigator = Instigator;
 
-		FVector spawn(500, 500, 20.0f);
+        FVector spawn(500, 500, 20.0f);
 
-		playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+        playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-		spawn = FVector(100, 100, 20.0f);
-		playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+        spawn = FVector(100, 100, 20.0f);
+        playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 
-    uint32 playerOneGridIndexX = 0;
-    uint32 playerOneGridIndexY = 0;
-    uint32 playerTwoGridIndexX = 2;
-    uint32 playerTwoGridIndexY = 2;
+        uint32 playerOneGridIndexX = 0;
+        uint32 playerOneGridIndexY = 0;
+        uint32 playerTwoGridIndexX = 10;
+        uint32 playerTwoGridIndexY = 10;
 
-    for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
-        if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
-            playerOne->currentTile = *actorIter;
-        } else if ((*actorIter)->gridIndexX == playerTwoGridIndexX && (*actorIter)->gridIndexY == playerTwoGridIndexY) {
-            playerTwo->currentTile = *actorIter;
+        for (TActorIterator<AHexGridTile> actorIter(World); actorIter; ++actorIter) {
+            if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
+                playerOne->currentTile = *actorIter;
+            }
+            else if ((*actorIter)->gridIndexX == playerTwoGridIndexX && (*actorIter)->gridIndexY == playerTwoGridIndexY) {
+                playerTwo->currentTile = *actorIter;
+            }
         }
+        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
     }
-    playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
-    playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
-	}
 
-	playerOne->other = playerTwo;
-	playerTwo->other = playerOne;
+    playerOne->other = playerTwo;
+    playerTwo->other = playerOne;
 
-	playerOne->gm = this;
-	playerTwo->gm = this;
+    playerOne->gm = this;
+    playerTwo->gm = this;
 
-	turnPlayer = (turn) ? (playerTwo) : (playerOne);
-	otherPlayer = (!turn) ? (playerTwo) : (playerOne);
+    turnPlayer = (turn) ? (playerTwo) : (playerOne);
+    otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
+    //turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
+    //otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
 
-	//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
-	//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
-
-	turnPlayer->applyTileEffects();
+    turnPlayer->applyTileEffects();
 }
 
 // Called every frame
@@ -92,36 +95,37 @@ void AGameManager::Tick(float DeltaTime)
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
 		case TurnStage::ApplyEffects:
-			//UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Cast:
-			//UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Craft:
-			//UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Move:
-			//UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+		  UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
 			break;
     
     case TurnStage::MoveEnd:
-      //UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+      UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
       turnPlayer->currentStage = TurnStage::Listening;
       break;
 
 		case TurnStage::End:
-			//UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
 			turn = !turn;
 
 			turnPlayer = (turn) ? (playerTwo) : (playerOne);
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
+      RecomputeDjikstra();
 
 			//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 			//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
@@ -132,7 +136,7 @@ void AGameManager::Tick(float DeltaTime)
 			break;
 
 		case TurnStage::Listening:
-			//UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
 }
@@ -147,6 +151,18 @@ AHexGridTile* AGameManager::GetTurnPlayerTile() const {
 
 void AGameManager::SetTurnPlayerTile(AHexGridTile* targetMoveTile) {
     turnPlayer->currentTile = targetMoveTile;
-    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation() + FVector(0, 0, 20));
+    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation() + FVector(0.f, 0.f, 20.f));
     turnPlayer->currentStage = TurnStage::MoveEnd;
+}
+
+void AGameManager::RecomputeDjikstra() {
+    for (TActorIterator<AHexGridGraphManager> actorIter(GetWorld()); actorIter; ++actorIter) {
+        for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+            (*actorIter)->ClearPrevNodes();
+        }
+        (*actorIter)->SetSourceTileID(turnPlayer->currentTile->ID);
+        (*actorIter)->ResetShortestPath();
+        (*actorIter)->DjikstraLoop();
+        (*actorIter)->SetShortestPath_Backwards(turnPlayer->currentTile);
+    }
 }

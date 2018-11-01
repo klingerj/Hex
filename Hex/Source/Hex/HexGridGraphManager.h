@@ -38,7 +38,6 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Djikstra")
   void SetShortestPath_Backwards(AHexGridTile* targetTile);
 
-  UFUNCTION(BlueprintCallable, Category = "Djikstra")
   void SetSourceTileID(int id);
 
   UFUNCTION(BlueprintCallable, Category = "Djikstra")
