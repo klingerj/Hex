@@ -4,7 +4,7 @@
 #include "EngineGlobals.h"
 
 // Sets default values
-AHexGridTile::AHexGridTile() : distanceToMove(0)
+AHexGridTile::AHexGridTile() : distanceToMove(0), onShortestPath(false)
 {
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
@@ -53,3 +53,10 @@ void AHexGridTile::SetGridIndex() {
     }*/
 }
 
+void AHexGridTile::AddPrevNode_Djikstra(AHexGridTile* node) {
+    prevNodes.insert(node);
+}
+
+void AHexGridTile::ClearPrevNodes() {
+    prevNodes.clear();
+}
