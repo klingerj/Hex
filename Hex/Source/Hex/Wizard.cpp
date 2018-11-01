@@ -18,32 +18,32 @@ AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(fa
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	// Set stats according to character class (can obviously change these as we develop combat)
-	switch (className) {
-		case WizardClass::AllAround:
-			maxHealth = 1000;
-			originalSpeed = 2;
-			break;
+	//switch (className) {
+	//	case WizardClass::AllAround:
+	//		maxHealth = 1000;
+	//		originalSpeed = 2;
+	//		break;
 
-		case WizardClass::Tank:
-			maxHealth = 1500;
-			originalSpeed = 1;
-			break;
+	//	case WizardClass::Tank:
+	//		maxHealth = 1500;
+	//		originalSpeed = 1;
+	//		break;
 
-		case WizardClass::Scout:
-			maxHealth = 700;
-			originalSpeed = 3;
-			break;
+	//	case WizardClass::Scout:
+	//		maxHealth = 700;
+	//		originalSpeed = 3;
+	//		break;
 
-		case WizardClass::BuffDebuff:
-			maxHealth = 800;
-			originalSpeed = 2;
-			break;
+	//	case WizardClass::BuffDebuff:
+	//		maxHealth = 800;
+	//		originalSpeed = 2;
+	//		break;
 
-		case WizardClass::GlassCannon:
-			maxHealth = 500;
-			originalSpeed = 2;
-			break;
-	}
+	//	case WizardClass::GlassCannon:
+	//		maxHealth = 500;
+	//		originalSpeed = 2;
+	//		break;
+	//}
 
 	health = maxHealth;
 	speed = originalSpeed;
@@ -54,7 +54,7 @@ void AWizard::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Spawn the inventory
+	// Spawn the inventory and spellbook
 	UWorld* const World = GetWorld();
 	if (World) {
 		FActorSpawnParameters SpawnParams;
@@ -63,6 +63,7 @@ void AWizard::BeginPlay()
 		FVector spawn(0, 0, 0);
 
 		inventory = World->SpawnActor<AInventory>(InvClass, spawn, FRotator(0.0f));
+		spellbook = World->SpawnActor<ASpellbook>(SBookClass, spawn, FRotator(0.0f));
 	}
 }
 
@@ -78,10 +79,19 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Turn phase hotkeys
 	PlayerInputComponent->BindAction("Cast", EInputEvent::IE_Pressed, this, &AWizard::castSpell);
 	PlayerInputComponent->BindAction("Craft", EInputEvent::IE_Pressed, this, &AWizard::craftSpell);
 	PlayerInputComponent->BindAction("Move", EInputEvent::IE_Pressed, this, &AWizard::move);
 	PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
+
+	// Spellcasting hotkeys
+	// TODO: Uncomment the following 5 lines once input is appropriately set up
+	//PlayerInputComponent->BindAction("Spell1", EInputEvent::IE_Pressed, this, &AWizard::hotkeyOne);
+	//PlayerInputComponent->BindAction("Spell2", EInputEvent::IE_Pressed, this, &AWizard::hotkeyTwo);
+	//PlayerInputComponent->BindAction("Spell3", EInputEvent::IE_Pressed, this, &AWizard::hotkeyThree);
+	//PlayerInputComponent->BindAction("Spell4", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFour);
+	//PlayerInputComponent->BindAction("Spell5", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFive);
 }
 
 /// GAMEPLAY FUNCTIONS
@@ -95,7 +105,7 @@ void AWizard::applyTileEffects() {
 	// Tile currentTile = getCurrentTile();
 	// if (!currentTile.isOnCooldown) {
 		// std::vector<Resources> res = currentTile.collectResources();
-		// inventory->addResources(res); // This call could also be in collectResources(), but this ensures we add to the proper wizard's inventory
+		// inventory->addResources(res); // This call could also be in Tile::collectResources(), but this ensures we add to the proper wizard's inventory
 	// }
 
 	UE_LOG(LogClass, Log, TEXT("EFFECTS"));
@@ -118,6 +128,7 @@ void AWizard::castSpell() {
 	UE_LOG(LogClass, Log, TEXT("CAST"));
 
 	// Cast something
+	// TODO: Read hotkey input, get appropriate spell from spellbook, check range vs. numTiles from opponent, cast spell
 
 	hasCast = true;
 	currentStage = AGameManager::TurnStage::Cast;
@@ -136,6 +147,7 @@ void AWizard::craftSpell() {
 	UE_LOG(LogClass, Log, TEXT("CRAFT"));
 
 	// Craft something
+	// TODO: spellbook->modifyExistingSpell(inventory, selectedResource, selectedSpell); need to prompt for selectedResource and selectedSpell
 
 	hasCrafted = true;
 	currentStage = AGameManager::TurnStage::Craft;
@@ -172,4 +184,44 @@ void AWizard::endTurn() {
 	UE_LOG(LogClass, Log, TEXT("END"));
 
 	currentStage = AGameManager::TurnStage::End;
+}
+
+void AWizard::hotkeyOne() {
+	if (currentStage != AGameManager::TurnStage::Cast) {
+		return;
+	}
+
+	spellbook->readiedSpells.at(0)->cast();
+}
+
+void AWizard::hotkeyTwo() {
+	if (currentStage != AGameManager::TurnStage::Cast) {
+		return;
+	}
+
+	spellbook->readiedSpells.at(1)->cast();
+}
+
+void AWizard::hotkeyThree() {
+	if (currentStage != AGameManager::TurnStage::Cast) {
+		return;
+	}
+
+	spellbook->readiedSpells.at(2)->cast();
+}
+
+void AWizard::hotkeyFour() {
+	if (currentStage != AGameManager::TurnStage::Cast) {
+		return;
+	}
+
+	spellbook->readiedSpells.at(3)->cast();
+}
+
+void AWizard::hotkeyFive() {
+	if (currentStage != AGameManager::TurnStage::Cast) {
+		return;
+	}
+
+	spellbook->readiedSpells.at(4)->cast();
 }

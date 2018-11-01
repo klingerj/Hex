@@ -48,7 +48,7 @@ bool AInventory::addResources(const std::vector<int>& resourceIDs) {
 			// Could look like:
 				// if (!inv.addResources(resVec)) {
 				//  Prompt player to choose and remove associated entries from resVec
-				//  resVec.erase() entries chosen
+				//  resVec.erase() entries chosen OR create new vec of chosen entries
 				//  inv.addResources(resVec);
 				// }
 			return false;

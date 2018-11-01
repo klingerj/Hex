@@ -9,12 +9,18 @@ ASpellbook::ASpellbook() : numSlotsFilled(0)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	this->SetActorEnableCollision(false);
+	this->SetActorHiddenInGame(true);
+
 }
 
 // Called when the game starts or when spawned
 void ASpellbook::BeginPlay()
 {
 	Super::BeginPlay();
+
+	this->SetActorEnableCollision(false);
+	this->SetActorHiddenInGame(true);
 	
 }
 
@@ -25,10 +31,14 @@ void ASpellbook::Tick(float DeltaTime)
 
 }
 
-void ASpellbook::addCraftedSpell(int spellID) {
+void ASpellbook::addCraftedSpell(ASpell* s) {
 	if (numSlotsFilled < capacity) {
-		readiedSpells.at(numSlotsFilled) = spellID;
+		readiedSpells.at(numSlotsFilled) = s;
 		numSlotsFilled++;
+	}
+	else {
+		FText header = FText::FromString("SPELLBOOK FULL");
+		FMessageDialog::Debugf(FText::FromString("You cannot add any more spells to your spellbook! Try modifying the ones you already have!"), &header);
 	}
 }
 
@@ -39,9 +49,23 @@ void ASpellbook::modifyExistingSpell(AInventory* inv, const std::vector<AResourc
 			r.applyEffect(s);
 		}
 		else {
-			// Resource removal didn't work -- add them back to the inventory to undo
+			FText header = FText::FromString("CANNOT MODIFY");
+			FMessageDialog::Debugf(FText::FromString("You do not have the resources to do this!"), &header);
+			// Resource removal didn't work -- add back to the inventory to undo
 			inv->addResources(r.getID());
 		}
+	}
+}
+
+void ASpellbook::modifyExistingSpell(AInventory* inv, const AResource& r, ASpell& s) {
+	if (inv->removeResources(r.getID())) {
+		r.applyEffect(s);
+	}
+	else {
+		FText header = FText::FromString("CANNOT MODIFY");
+		FMessageDialog::Debugf(FText::FromString("You do not have the resources to do this!"), &header);
+		// Resource removal didn't work -- add back to the inventory to undo
+		inv->addResources(r.getID());
 	}
 }
 

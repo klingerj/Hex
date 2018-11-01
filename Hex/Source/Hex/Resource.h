@@ -14,8 +14,12 @@ class HEX_API AResource : public AActor
 	GENERATED_BODY()
 	
 public:
+	enum EffectType { Damage = 0, Accuracy = 1, Range = 2 };
+	enum Rarity { Common = 0, Uncommon = 1, Rare = 2, Epic = 3 };
+
 	// Sets default values for this actor's properties
 	AResource();
+	AResource(EffectType e, Rarity r);
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,17 +34,16 @@ public:
 	static int currId;
 
 	// What aspect of a spell does this resource affect?
-	enum EffectType { Damage = 0, Accuracy = 1, Range = 2, AreaOfEffect = 3 };
+	
 	EffectType affectedStat;
 
 	// How rare is this resource? Higher rarity => appears less frequently but is more powerful
-	enum Rarity {Common = 0, Uncommon = 1, Rare = 2, Epic = 3};
 	Rarity rarity;
 
 	// Total number of unique resources is at least (num of EffectTypes) * (num of Rarities)
 
 	// Virtual function of the actual effect; to be specified in the individual resource subclasses
-	virtual void applyEffect(ASpell& s) const;
+	virtual int applyEffect(ASpell& s) const;
 
 	/// GETTERS
 	int getID() const;

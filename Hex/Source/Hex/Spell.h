@@ -3,6 +3,8 @@
 #pragma once
 
 #include <string>
+#include <ctime>
+#include "MessageDialog.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -14,8 +16,11 @@ class HEX_API ASpell : public AActor
 	GENERATED_BODY()
 
 public:	
+	enum Element { Water = 0, Earth = 1, Fire = 2, Electricity = 3 };
+	enum SpellType { Damage = 0, BuffDebuff = 1, Terrain = 2, AOE = 3 };
 	// Sets default values for this actor's properties
 	ASpell();
+	ASpell(Element e, SpellType t, std::string name, int baseDamageMin, int baseDamageMax, int baseAcc, int baseRange, int baseAOE);
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,24 +34,30 @@ public:
 	// Must be unique
 	int id;
 	static int currId;
+
 	// Spell names should probably be unique too
 	std::string name;
-	enum Element { Water = 0, Earth = 1, Fire = 2, Electricity = 3 };
+	
 	Element element;
-	// Member of (0, 100]
-	int accuracy;
-	// Number of tiles representing how far from the player the spell can be cast/will reach
-	int range;
-
-	enum SpellType { Damage = 0, BuffDebuff = 1, Terrain = 2, AOE = 3 };
 	SpellType type;
 
+	// Member of (0, 100]
+	int originalAccuracy;
+	int accuracy;
+	// Number of tiles representing how far from the player the spell can be cast/will reach
+	int originalRange;
+	int range;
+
 	/// PROPERTIES OF SOME SPELLS -- All spells will have these fields, but they will be accessed based on the "type" variable
-	// How much damage this does on hit
-	int damage;
+	// How much damage this does on hit (range)
+	int originalMin, originalMax;
+	int damageMin, damageMax;
 	// Number of tiles affected when this spell hits (i.e. - its area of effect)
 	int areaOfEffect;
 
 	/// SPELL FUNCTIONS
-	virtual void cast();
+	virtual int cast();
+
+	/// UTILITY FUNCTIONS
+	std::string elementToString();
 };

@@ -32,9 +32,11 @@ public:
 	const int capacity = 5;
 	int numSlotsFilled;
 	
-	std::array<int, 5> readiedSpells; // Second argument needs to be hardcoded?
+	// Needs to be an array of ASpell* instead of ASpell in order to get around a privacy error caused by GENERATED_BODY()
+	std::array<ASpell*, 5> readiedSpells; // Second argument needs to be hardcoded?
 
 	/// GAMEPLAY FUNCTIONS
-	void addCraftedSpell(int spellID);
+	void addCraftedSpell(ASpell* s);
 	void modifyExistingSpell(AInventory* inv, const std::vector<AResource>& resources, ASpell& s);
+	void modifyExistingSpell(AInventory* inv, const AResource& r, ASpell& s);
 };

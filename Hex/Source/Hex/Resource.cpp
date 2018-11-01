@@ -6,11 +6,11 @@
 int AResource::currId = 0;
 
 // Sets default values
-AResource::AResource() : id(currId++), affectedStat(EffectType::Damage), rarity(Rarity::Common)
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+AResource::AResource() : AResource(EffectType::Damage, Rarity::Common) {}
 
+AResource::AResource(EffectType e, Rarity r) : id(currId++), affectedStat(e), rarity(r) {
+
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
@@ -27,23 +27,19 @@ void AResource::Tick(float DeltaTime)
 
 }
 
-void AResource::applyEffect(ASpell& s) const {
+int AResource::applyEffect(ASpell& s) const {
 	// If we're using an AOE or Damage resource, we need to make sure the spell we're modifying is appropriate
 	switch (affectedStat) {
-		case EffectType::AreaOfEffect:
-			if (s.type != ASpell::SpellType::AOE) {
-				UE_LOG(LogClass, Error, TEXT("Cannot modify non-AOE spell with AOE resource"));
-			}
-			return;
-			break;
-
 		case EffectType::Damage:
 			if (s.type != ASpell::SpellType::Damage) {
-				UE_LOG(LogClass, Error, TEXT("Cannot modify non-Damage spell with Damage resource"));
+				FText header = FText::FromString("IMPROPER CRAFTING");
+				FMessageDialog::Debugf(FText::FromString("Cannot modify non-Damage spell with Damage resource"), &header);
+				return 1;
 			}
-			return;
 			break;
 	}
+
+	return 0;
 
 	// Implement the rest in subclasses (specific resources)
 }
