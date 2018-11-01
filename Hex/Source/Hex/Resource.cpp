@@ -2,13 +2,10 @@
 
 #include "Resource.h"
 
-// Initialize static variable
-int AResource::currId = 0;
-
 // Sets default values
 AResource::AResource() : AResource(EffectType::Damage, Rarity::Common) {}
 
-AResource::AResource(EffectType e, Rarity r) : id(currId++), affectedStat(e), rarity(r) {
+AResource::AResource(EffectType e, Rarity r) : affectedStat(e), rarity(r) {
 
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -44,6 +41,6 @@ int AResource::applyEffect(ASpell& s) const {
 	// Implement the rest in subclasses (specific resources)
 }
 
-int AResource::getID() const {
-	return id;
+const int AResource::getID() const {
+    return -1;
 }

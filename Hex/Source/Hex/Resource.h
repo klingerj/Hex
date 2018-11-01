@@ -31,10 +31,8 @@ public:
 
 	// Each resource will have a unique identifier
 	int id;
-	static int currId;
 
 	// What aspect of a spell does this resource affect?
-	
 	EffectType affectedStat;
 
 	// How rare is this resource? Higher rarity => appears less frequently but is more powerful
@@ -46,5 +44,5 @@ public:
 	virtual int applyEffect(ASpell& s) const;
 
 	/// GETTERS
-	int getID() const;
+	virtual const int getID() const;
 };

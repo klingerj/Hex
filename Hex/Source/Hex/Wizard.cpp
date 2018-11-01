@@ -1,6 +1,7 @@
 #include "Wizard.h"
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 
 // Default constructor required; if nothing chosen for some reason, choose All-Around build
 AWizard::AWizard() : AWizard(0) {}
@@ -18,32 +19,32 @@ AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(fa
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	// Set stats according to character class (can obviously change these as we develop combat)
-	//switch (className) {
-	//	case WizardClass::AllAround:
-	//		maxHealth = 1000;
-	//		originalSpeed = 2;
-	//		break;
-
-	//	case WizardClass::Tank:
-	//		maxHealth = 1500;
-	//		originalSpeed = 1;
-	//		break;
-
-	//	case WizardClass::Scout:
-	//		maxHealth = 700;
-	//		originalSpeed = 3;
-	//		break;
-
-	//	case WizardClass::BuffDebuff:
-	//		maxHealth = 800;
-	//		originalSpeed = 2;
-	//		break;
-
-	//	case WizardClass::GlassCannon:
-	//		maxHealth = 500;
-	//		originalSpeed = 2;
-	//		break;
-	//}
+	switch (className) {
+		case WizardClass::AllAround:
+			maxHealth = 200;
+			originalSpeed = 2;
+			break;
+  
+		case WizardClass::Tank:
+			maxHealth = 300;
+			originalSpeed = 1;
+			break;
+  
+		case WizardClass::Scout:
+			maxHealth = 140;
+			originalSpeed = 3;
+			break;
+  
+		case WizardClass::BuffDebuff:
+			maxHealth = 160;
+			originalSpeed = 2;
+			break;
+  
+		case WizardClass::GlassCannon:
+			maxHealth = 100;
+			originalSpeed = 2;
+			break;
+  }
 
 	health = maxHealth;
 	speed = originalSpeed;
@@ -83,17 +84,19 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Cast", EInputEvent::IE_Pressed, this, &AWizard::castSpell);
 	PlayerInputComponent->BindAction("Craft", EInputEvent::IE_Pressed, this, &AWizard::craftSpell);
 	PlayerInputComponent->BindAction("Move", EInputEvent::IE_Pressed, this, &AWizard::move);
-    PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
-    PlayerInputComponent->BindAction("DisplayControls", EInputEvent::IE_Pressed, this, &AWizard::ToggleControlDisplay);
-	PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
+  PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
 
 	// Spellcasting hotkeys
-	// TODO: Uncomment the following 5 lines once input is appropriately set up
-	//PlayerInputComponent->BindAction("Spell1", EInputEvent::IE_Pressed, this, &AWizard::hotkeyOne);
-	//PlayerInputComponent->BindAction("Spell2", EInputEvent::IE_Pressed, this, &AWizard::hotkeyTwo);
-	//PlayerInputComponent->BindAction("Spell3", EInputEvent::IE_Pressed, this, &AWizard::hotkeyThree);
-	//PlayerInputComponent->BindAction("Spell4", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFour);
-	//PlayerInputComponent->BindAction("Spell5", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFive);
+	PlayerInputComponent->BindAction("Spell1", EInputEvent::IE_Pressed, this, &AWizard::hotkeyOne);
+	PlayerInputComponent->BindAction("Spell2", EInputEvent::IE_Pressed, this, &AWizard::hotkeyTwo);
+	PlayerInputComponent->BindAction("Spell3", EInputEvent::IE_Pressed, this, &AWizard::hotkeyThree);
+	PlayerInputComponent->BindAction("Spell4", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFour);
+	PlayerInputComponent->BindAction("Spell5", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFive);
+
+  // UI hotkeys
+  PlayerInputComponent->BindAction("DisplayControls", EInputEvent::IE_Pressed, this, &AWizard::ToggleControlDisplay);
+  //PlayerInputComponent->BindAction("Spellbook", EInputEvent::IE_Pressed, this, &AWizard::showSpellbook);
+  //PlayerInputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AWizard::showInventory);
 }
 
 /// GAMEPLAY FUNCTIONS
@@ -103,14 +106,12 @@ void AWizard::applyTileEffects() {
 		return;
 	}
 
-	// TODO: Implement the following
-	// Tile currentTile = getCurrentTile();
-	// if (!currentTile.isOnCooldown) {
-		// std::vector<Resources> res = currentTile.collectResources();
-		// inventory->addResources(res); // This call could also be in Tile::collectResources(), but this ensures we add to the proper wizard's inventory
-	// }
-
-	UE_LOG(LogClass, Log, TEXT("EFFECTS"));
+  for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+      AHexGridTile* currTile = *actorIter;
+      //TileYield tileYield = currTile->hexGridTileEffect->Yield();
+      AResource* res = currTile->hexGridTileEffect->resource;
+      inventory->addResources(res->getID());
+  }
 
 	// Apply current tile's effects and collect resources
 	currentStage = AGameManager::TurnStage::ApplyEffects;
@@ -129,10 +130,9 @@ void AWizard::castSpell() {
 
 	UE_LOG(LogClass, Log, TEXT("CAST"));
 
-	// Cast something
-	// TODO: Read hotkey input, get appropriate spell from spellbook, check range vs. numTiles from opponent, cast spell
+	// Cast something (handled in spell hotkey functions below)
+    // Flow: Press C to enter cast mode, currentStage becomes Cast, press hotkey to cast desired spell
 
-	hasCast = true;
 	currentStage = AGameManager::TurnStage::Cast;
 }
 
@@ -192,6 +192,8 @@ int AWizard::GetHealth() const {
     return health;
 }
 
+
+/// UI HOTKEY FUNCTIONS
 void AWizard::ToggleControlDisplay() {
     if (this == gm->turnPlayer) {
         displayControls = !displayControls;
@@ -200,46 +202,104 @@ void AWizard::ToggleControlDisplay() {
     }
 }
 
+// TODO: JOE: These two functions bring up the spellbook and inventory on hotkey presses
+void AWizard::showSpellbook() {
+    FText header = FText::FromString("SPELLBOOK");
+    std::string contents = "";
+
+    for (int i = 0; i < 5; ++i) {
+        ASpell* s = spellbook->readiedSpells.at(i);
+        contents += "Slot " + std::to_string(i) + ": " + s->name + "\n\t" + s->description + "\n\n";
+    }
+
+    FString fContents = contents.c_str();
+    FMessageDialog::Debugf(FText::FromString(fContents), &header);
+}
+
+void AWizard::showInventory() {
+    FText header = FText::FromString("INVENTORY");
+    std::string contents = "";
+
+    for (int i = 0; i < inventory->inventory.size(); ++i) {
+        int quant = inventory->inventory.at(i);
+        switch (i) {
+        case 0:
+            contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
+            break;
+        case 1:
+            contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
+            break;
+        case 2:
+            contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
+            break;
+        case 3:
+            contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
+            break;
+        }
+    }
+
+    FString fContents = contents.c_str();
+    FMessageDialog::Debugf(FText::FromString(fContents), &header);
+}
+
 bool AWizard::GetDisplayControls() {
     return displayControls;
 }
 
+/// SPELL HOTKEY FUNCTIONS
 void AWizard::hotkeyOne() {
-	if (currentStage != AGameManager::TurnStage::Cast) {
+	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
 
-	spellbook->readiedSpells.at(0)->cast();
+  hasCast = true;
+
+  // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+  // TODO: Incorporate range into whether or not a spell can be cast
+	int dmg = spellbook->readiedSpells.at(0)->cast();
+  other->health -= dmg;
 }
 
 void AWizard::hotkeyTwo() {
-	if (currentStage != AGameManager::TurnStage::Cast) {
+	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
 
-	spellbook->readiedSpells.at(1)->cast();
+  hasCast = true;
+
+	int dmg = spellbook->readiedSpells.at(1)->cast();
+  other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
-	if (currentStage != AGameManager::TurnStage::Cast) {
+	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
 
-	spellbook->readiedSpells.at(2)->cast();
+  hasCast = true;
+
+	int dmg = spellbook->readiedSpells.at(2)->cast();
+  other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
-	if (currentStage != AGameManager::TurnStage::Cast) {
+	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
 
-	spellbook->readiedSpells.at(3)->cast();
+  hasCast = true;
+
+	int dmg = spellbook->readiedSpells.at(3)->cast();
+  other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
-	if (currentStage != AGameManager::TurnStage::Cast) {
+	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
 
-	spellbook->readiedSpells.at(4)->cast();
+  hasCast = true;
+
+	int dmg = spellbook->readiedSpells.at(4)->cast();
+  other->health -= dmg;
 }

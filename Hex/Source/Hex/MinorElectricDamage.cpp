@@ -2,7 +2,9 @@
 
 #include "MinorElectricDamage.h"
 
-AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Minor Shock", 20, 30, 55, 5, 1) {}
+AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Minor Shock", 20, 30, 55, 5, 1) {
+    description = "Element: Electricity, Damage: 20 - 30, Accuracy: 55%, Range: 5";
+}
 
 // Returns the amount of damage done to the opponent
 int AMinorElectricDamage::cast() {

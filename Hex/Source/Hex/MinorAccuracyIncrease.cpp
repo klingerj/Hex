@@ -26,4 +26,6 @@ int AMinorAccuracyIncrease::applyEffect(ASpell& s) const {
 	return 0;
 }
 
-
+const int AMinorAccuracyIncrease::getID() const {
+    return id;
+}

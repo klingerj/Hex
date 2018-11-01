@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Resource.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "HexGridTileEffect.generated.h"
@@ -45,6 +46,9 @@ public:
   void ResetCooldown();
   bool IsOnCooldown() const;
   void AdvanceCooldown();
+  AResource* resource;
+
+  void SetResource(int type, int rarity);
 
   // Usage (by some global class)
   /*

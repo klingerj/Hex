@@ -121,6 +121,15 @@ void AGameManager::Tick(float DeltaTime)
       break;
 
 		case TurnStage::End:
+        // TODO: JOE: This checks win/loss conditions and ends the game
+      if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {
+          FText header = FText::FromString("GAME OVER");
+          std::string msg = "Player " + std::to_string(turn + 1) + " wins!";
+          FString fMsg = msg.c_str();
+          FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+          // TODO: Return to start menu; temporary fix is to just quit the application
+          exit(0);
+      }
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
 			turn = !turn;

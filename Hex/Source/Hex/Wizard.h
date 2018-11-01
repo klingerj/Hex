@@ -65,9 +65,11 @@ public:
 	// Maintain an inventory of collected resources
 	AInventory* inventory;
 	TSubclassOf<class AInventory> InvClass;
+  void showInventory();
 
 	ASpellbook* spellbook;
 	TSubclassOf<class ASpellbook> SBookClass;
+  void showSpellbook();
 
 	AWizard* other;
 	AGameManager* gm;

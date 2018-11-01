@@ -1,7 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HexGridTileEffect.h"
+#include "MinorDamageBoost.h"
+#include "MajorDamageBoost.h"
+#include "MajorAccuracyIncrease.h"
+#include "MinorAccuracyIncrease.h"
 #include "EngineGlobals.h"
+#include "Engine/World.h"
 #include <algorithm>
 
 // Sets default values for this component's properties
@@ -44,4 +49,63 @@ void UHexGridTileEffect::AdvanceCooldown() {
 TileYield UHexGridTileEffect::Yield() {
     ResetCooldown();
     return { element, yield, yieldQuantity };
+}
+
+void UHexGridTileEffect::SetResource(int type, int rarity) {
+    switch (type) {
+    case 0:
+        switch (rarity) {
+        case 0:
+        {
+            TSubclassOf<class AMinorDamageBoost> dmgClass;
+            resource = GetWorld()->SpawnActor<AMinorDamageBoost>(dmgClass, FVector(0, 0, 0), FRotator(0.0f));
+            break;
+        }
+        case 1:
+            break;
+        case 2:
+        {
+            TSubclassOf<class AMajorDamageBoost> dmgClass;
+            resource = GetWorld()->SpawnActor<AMajorDamageBoost>(dmgClass, FVector(0, 0, 0), FRotator(0.0f));
+            break;
+        }
+        case 3:
+            break;
+        }
+        break;
+    case 1:
+        switch (rarity) {
+        case 0:
+        {
+            TSubclassOf<class AMinorAccuracyIncrease> accClass;
+            resource = GetWorld()->SpawnActor<AMinorAccuracyIncrease>(accClass, FVector(0, 0, 0), FRotator(0.0f));
+            break;
+        }
+        case 1:
+            break;
+        case 2:
+        {
+            TSubclassOf<class AMajorAccuracyIncrease> accClass;
+            resource = GetWorld()->SpawnActor<AMajorAccuracyIncrease>(accClass, FVector(0, 0, 0), FRotator(0.0f));
+            break;
+        }
+        case 3:
+            break;
+        }
+        break;
+    case 2:
+        switch (rarity) {
+        case 0:
+            //resource = new thingy;
+            break;
+        case 1:
+            break;
+        case 2:
+            //resource = new thingy;
+            break;
+        case 3:
+            break;
+        }
+        break;
+    }
 }

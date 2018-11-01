@@ -20,5 +20,8 @@ public:
 public:
 	const int boost = 15;
 
+  const static int id = 1;
+
 	virtual int applyEffect(ASpell& s) const override;
+  virtual const int getID() const override;
 };

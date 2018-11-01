@@ -2,7 +2,9 @@
 
 #include "MinorFireDamage.h"
 
-AMinorFireDamage::AMinorFireDamage() : ASpell(Element::Fire, SpellType::Damage, "Minor Fireball", 10, 20, 70, 5, 1) {}
+AMinorFireDamage::AMinorFireDamage() : ASpell(Element::Fire, SpellType::Damage, "Minor Fireball", 10, 20, 70, 5, 1) {
+    description = "Element: Fire, Damage: 10 - 20, Accuracy: 70%, Range: 5";
+}
 
 // Returns the amount of damage done to the opponent
 int AMinorFireDamage::cast() {

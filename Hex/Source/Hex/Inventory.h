@@ -46,5 +46,4 @@ public:
 
 	bool removeResources(const std::vector<int>& resourceIDs);
 	bool removeResources(int resourceID);
-	
 };

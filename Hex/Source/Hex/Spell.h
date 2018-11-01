@@ -37,6 +37,8 @@ public:
 
 	// Spell names should probably be unique too
 	std::string name;
+  
+  std::string description;
 	
 	Element element;
 	SpellType type;

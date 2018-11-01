@@ -27,3 +27,6 @@ int AMinorDamageBoost::applyEffect(ASpell& s) const {
 	return 0;
 }
 
+const int AMinorDamageBoost::getID() const {
+    return id;
+}

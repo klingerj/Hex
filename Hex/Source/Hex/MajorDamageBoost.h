@@ -18,7 +18,10 @@ public:
 	AMajorDamageBoost();
 
 public:
-	const int boost = 50;
+	const int boost = 30;
+
+  const static int id = 3;
 
 	virtual int applyEffect(ASpell& s) const override;
+  virtual const int getID() const override;
 };

@@ -26,5 +26,7 @@ int AMajorAccuracyIncrease::applyEffect(ASpell& s) const {
 	return 0;
 }
 
-
+const int AMajorAccuracyIncrease::getID() const {
+    return id;
+}
 

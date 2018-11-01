@@ -41,7 +41,7 @@ int ASpell::cast() {
 	}
 
 	return 0;
-	// Implement in subclasses
+	// Further implemented in subclasses
 
 }
 

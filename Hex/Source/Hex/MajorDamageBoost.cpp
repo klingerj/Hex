@@ -27,5 +27,7 @@ int AMajorDamageBoost::applyEffect(ASpell& s) const {
 	return 0;
 }
 
-
+const int AMajorDamageBoost::getID() const {
+    return id;
+}
 
