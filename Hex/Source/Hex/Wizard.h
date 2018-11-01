@@ -47,6 +47,16 @@ public:
 	enum WizardClass { AllAround = 0, Tank = 1, Scout = 2, BuffDebuff = 3, GlassCannon = 4 };
 	// Current stats (modified by spells)
 	int health, speed;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  int GetHealth() const;
+
+  bool displayControls;
+  void ToggleControlDisplay();
+
+  UFUNCTION(BlueprintCallable, Category = "Setup")
+  bool GetDisplayControls();
+
 	// Max stats
 	int maxHealth, originalSpeed;
 	// Track if certain actions have been taken and what stage of the turn we're in
