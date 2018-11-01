@@ -9,7 +9,7 @@
 #include <string>
 
 // Sets default values
-AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlayer(nullptr)
+AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlayer(nullptr), turnCounter(0)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,6 +64,8 @@ void AGameManager::Setup() {
         playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
     }
 
+    playerOne->Tags.Add(FName("Player One"));
+    playerTwo->Tags.Add(FName("Player Two"));
     playerOne->other = playerTwo;
     playerTwo->other = playerOne;
 
@@ -122,6 +124,7 @@ void AGameManager::Tick(float DeltaTime)
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
 			turn = !turn;
+      turnCounter++;
 
 			turnPlayer = (turn) ? (playerTwo) : (playerOne);
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
@@ -136,7 +139,7 @@ void AGameManager::Tick(float DeltaTime)
 			break;
 
 		case TurnStage::Listening:
-			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
 }
@@ -165,4 +168,16 @@ void AGameManager::RecomputeDjikstra() {
         (*actorIter)->DjikstraLoop();
         (*actorIter)->SetShortestPath_Backwards(turnPlayer->currentTile);
     }
+}
+
+int AGameManager::GetTurnCounter() const {
+    return turnCounter;
+}
+
+bool AGameManager::GetTurn() const {
+    return turn;
+}
+
+AWizard* AGameManager::GetTurnPlayer() const {
+    return turnPlayer;
 }

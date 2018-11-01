@@ -5,7 +5,7 @@
 AWizard::AWizard() : AWizard(0) {}
 
 // Sets default values
-AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(false), currentStage(AGameManager::ApplyEffects), other(nullptr)
+AWizard::AWizard(int className) : hasCast(false), hasCrafted(false), hasMoved(false), currentStage(AGameManager::ApplyEffects), other(nullptr), displayControls(false)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -65,7 +65,8 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Cast", EInputEvent::IE_Pressed, this, &AWizard::castSpell);
 	PlayerInputComponent->BindAction("Craft", EInputEvent::IE_Pressed, this, &AWizard::craftSpell);
 	PlayerInputComponent->BindAction("Move", EInputEvent::IE_Pressed, this, &AWizard::move);
-	PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
+  PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
+  PlayerInputComponent->BindAction("DisplayControls", EInputEvent::IE_Pressed, this, &AWizard::ToggleControlDisplay);
 }
 
 /// GAMEPLAY FUNCTIONS
@@ -149,4 +150,20 @@ void AWizard::endTurn() {
 	UE_LOG(LogClass, Log, TEXT("END"));
 
 	currentStage = AGameManager::TurnStage::End;
+}
+
+int AWizard::GetHealth() const {
+    return health;
+}
+
+void AWizard::ToggleControlDisplay() {
+    if (this == gm->turnPlayer) {
+        displayControls = !displayControls;
+    } else {
+        other->ToggleControlDisplay();
+    }
+}
+
+bool AWizard::GetDisplayControls() {
+    return displayControls;
 }
