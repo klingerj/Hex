@@ -56,15 +56,21 @@ void AWizard::BeginPlay()
 	Super::BeginPlay();
 
 	// Spawn the inventory and spellbook
+
+}
+
+void AWizard::spawnInvAndSpellbook() {
 	UWorld* const World = GetWorld();
 	if (World) {
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
-		FVector spawn(0, 0, 0);
+		FVector spawn(100, 100, 1000);
 
-		inventory = World->SpawnActor<AInventory>(InvClass, spawn, FRotator(0.0f));
-		spellbook = World->SpawnActor<ASpellbook>(SBookClass, spawn, FRotator(0.0f));
+		inventory = World->SpawnActor<AInventory>(AInventory::StaticClass(), spawn, FRotator(0.0f));
+		UE_LOG(LogClass, Log, TEXT("Tried to spawn an inventory"));
+		spellbook = World->SpawnActor<ASpellbook>(ASpellbook::StaticClass(), spawn, FRotator(0.0f));
+		UE_LOG(LogClass, Log, TEXT("Tried to spawn a spellbook"));
 	}
 }
 
@@ -109,6 +115,17 @@ void AWizard::applyTileEffects() {
   for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
       AHexGridTile* currTile = *actorIter;
       //TileYield tileYield = currTile->hexGridTileEffect->Yield();
+	  if (currTile) {
+		  if (currTile->hexGridTileEffect) {
+
+		  }
+		  else {
+			  UE_LOG(LogClass, Log, TEXT(""));
+		  }
+	  }
+	  else {
+		  UE_LOG(LogClass, Log, TEXT("currtile was null"));
+	  }
       AResource* res = currTile->hexGridTileEffect->resource;
       inventory->addResources(res->getID());
   }

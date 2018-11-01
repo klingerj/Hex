@@ -51,14 +51,15 @@ TileYield UHexGridTileEffect::Yield() {
     return { element, yield, yieldQuantity };
 }
 
-void UHexGridTileEffect::SetResource(int type, int rarity) {
+void UHexGridTileEffect::SetResource() {
     switch (type) {
     case 0:
         switch (rarity) {
         case 0:
         {
             TSubclassOf<class AMinorDamageBoost> dmgClass;
-            resource = GetWorld()->SpawnActor<AMinorDamageBoost>(dmgClass, FVector(0, 0, 0), FRotator(0.0f));
+            resource = GetWorld()->SpawnActor<AMinorDamageBoost>(AMinorDamageBoost::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
             break;
         }
         case 1:
@@ -66,7 +67,8 @@ void UHexGridTileEffect::SetResource(int type, int rarity) {
         case 2:
         {
             TSubclassOf<class AMajorDamageBoost> dmgClass;
-            resource = GetWorld()->SpawnActor<AMajorDamageBoost>(dmgClass, FVector(0, 0, 0), FRotator(0.0f));
+            resource = GetWorld()->SpawnActor<AMajorDamageBoost>(AMajorDamageBoost::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
             break;
         }
         case 3:
@@ -78,7 +80,8 @@ void UHexGridTileEffect::SetResource(int type, int rarity) {
         case 0:
         {
             TSubclassOf<class AMinorAccuracyIncrease> accClass;
-            resource = GetWorld()->SpawnActor<AMinorAccuracyIncrease>(accClass, FVector(0, 0, 0), FRotator(0.0f));
+            resource = GetWorld()->SpawnActor<AMinorAccuracyIncrease>(AMinorAccuracyIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
             break;
         }
         case 1:
@@ -86,7 +89,8 @@ void UHexGridTileEffect::SetResource(int type, int rarity) {
         case 2:
         {
             TSubclassOf<class AMajorAccuracyIncrease> accClass;
-            resource = GetWorld()->SpawnActor<AMajorAccuracyIncrease>(accClass, FVector(0, 0, 0), FRotator(0.0f));
+            resource = GetWorld()->SpawnActor<AMajorAccuracyIncrease>(AMajorAccuracyIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
             break;
         }
         case 3:

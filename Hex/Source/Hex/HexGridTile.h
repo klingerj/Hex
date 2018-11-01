@@ -46,4 +46,7 @@ public:
 
   UFUNCTION(BlueprintCallable, Category = "Setup")
   void SetGridIndex();
+
+  UFUNCTION(BlueprintCallable, Category = "Setup")
+  void SetGridEffect(UHexGridTileEffect* effect);
 };

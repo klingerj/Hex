@@ -43,9 +43,13 @@ void AGameManager::Setup() {
         FVector spawn(500, 500, 20.0f);
 
         playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
+		playerOne->spawnInvAndSpellbook();
 
         spawn = FVector(100, 100, 20.0f);
         playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
+		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
+		playerTwo->spawnInvAndSpellbook();
 
         uint32 playerOneGridIndexX = 0;
         uint32 playerOneGridIndexY = 0;

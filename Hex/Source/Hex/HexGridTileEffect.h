@@ -40,6 +40,12 @@ public:
   TileYieldType yield;
   uint32 yieldQuantity;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+  int type;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+  int rarity;
+
   // Cooldown logic
   uint32 maxCooldownTurns;
   uint32 remainingCooldownTurns;
@@ -48,7 +54,8 @@ public:
   void AdvanceCooldown();
   AResource* resource;
 
-  void SetResource(int type, int rarity);
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  void SetResource();
 
   // Usage (by some global class)
   /*

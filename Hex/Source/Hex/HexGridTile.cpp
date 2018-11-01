@@ -10,8 +10,8 @@ AHexGridTile::AHexGridTile() : distanceToMove(0), onShortestPath(false)
     PrimaryActorTick.bCanEverTick = true;
 
     // Init components
-    hexGridTileEffect = CreateDefaultSubobject<UHexGridTileEffect>(TEXT("Hex Grid Tile Effect Component"));
-    AddOwnedComponent(hexGridTileEffect);
+    //hexGridTileEffect = CreateDefaultSubobject<UHexGridTileEffect>(TEXT("Hex Grid Tile Effect Component"));
+    //AddOwnedComponent(hexGridTileEffect);
 }
 
 // Called when the game starts or when spawned
@@ -59,4 +59,8 @@ void AHexGridTile::AddPrevNode_Djikstra(AHexGridTile* node) {
 
 void AHexGridTile::ClearPrevNodes() {
     prevNodes.clear();
+}
+
+void AHexGridTile::SetGridEffect(UHexGridTileEffect* effect) {
+	hexGridTileEffect = effect;
 }
