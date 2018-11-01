@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GameManager.h"
+#include "Inventory.h"
+#include "Spellbook.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
@@ -28,11 +30,18 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/// GAMEPLAY FUNCTIONS
+	// Turn phases
 	void applyTileEffects();
 	void castSpell();
 	void craftSpell();
 	void move();
 	void endTurn();
+	// Hotkey spells
+	void hotkeyOne();
+	void hotkeyTwo();
+	void hotkeyThree();
+	void hotkeyFour();
+	void hotkeyFive();
 
 	/// STATE VARIABLES
 	enum WizardClass { AllAround = 0, Tank = 1, Scout = 2, BuffDebuff = 3, GlassCannon = 4 };
@@ -50,9 +59,15 @@ public:
 
 	// Max stats
 	int maxHealth, originalSpeed;
-	// Track if certain actions have been taken
+	// Track if certain actions have been taken and what stage of the turn we're in
 	bool hasCast, hasCrafted, hasMoved;
 	AGameManager::TurnStage currentStage;
+	// Maintain an inventory of collected resources
+	AInventory* inventory;
+	TSubclassOf<class AInventory> InvClass;
+
+	ASpellbook* spellbook;
+	TSubclassOf<class ASpellbook> SBookClass;
 
 	AWizard* other;
 	AGameManager* gm;
