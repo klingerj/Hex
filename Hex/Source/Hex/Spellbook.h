@@ -7,6 +7,9 @@
 #include "Spell.h"
 #include "Inventory.h"
 
+#include "MinorFireDamage.h"
+#include "MinorElectricDamage.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Spellbook.generated.h"
