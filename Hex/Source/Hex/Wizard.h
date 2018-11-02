@@ -15,8 +15,10 @@ class HEX_API AWizard : public APawn
 	GENERATED_BODY()
 
 public:
+	enum WizardClass { AllAround = 0, Tank = 1, Scout = 2, BuffDebuff = 3, GlassCannon = 4 };
+
 	AWizard();
-	AWizard(int className);
+	AWizard(WizardClass className);
 
 protected:
 	// Called when the game starts or when spawned
@@ -46,7 +48,7 @@ public:
 	void hotkeyFive();
 
 	/// STATE VARIABLES
-	enum WizardClass { AllAround = 0, Tank = 1, Scout = 2, BuffDebuff = 3, GlassCannon = 4 };
+	WizardClass charClass;
 	// Current stats (modified by spells)
 	int health, speed;
 
@@ -75,5 +77,5 @@ public:
 
 	AWizard* other;
 	AGameManager* gm;
-  AHexGridTile* currentTile; // the tile that the wizard is currently standing on
+	AHexGridTile* currentTile; // the tile that the wizard is currently standing on
 };
