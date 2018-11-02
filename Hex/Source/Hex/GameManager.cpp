@@ -163,6 +163,10 @@ int32 AGameManager::GetStage() const {
     return turnPlayer->currentStage;
 }
 
+void AGameManager::SetStage(int32 s) {
+    turnPlayer->currentStage = (TurnStage)s;
+}
+
 AHexGridTile* AGameManager::GetTurnPlayerTile() const {
     return turnPlayer->currentTile;
 }
@@ -199,4 +203,24 @@ AWizard* AGameManager::GetTurnPlayer() const {
 
 ASpell* AGameManager::GetCurrentlySelectedSpell() const {
     return turnPlayer->spellbook->readiedSpells[turnPlayer->selectedSpell];
+}
+
+void AGameManager::CastSpell(int i) {
+    /*switch (i) {
+    case 0:
+        turnPlayer->CastSpellOne();
+        break;
+    case 1:
+        turnPlayer->CastSpellTwo();
+        break;
+    case 2:
+        turnPlayer->CastSpellThree();
+        break;
+    case 3:
+        turnPlayer->CastSpellFour();
+        break;
+    case 4:
+        turnPlayer->CastSpellFive();
+        break;
+    }*/
 }

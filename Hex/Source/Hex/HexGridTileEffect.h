@@ -43,7 +43,6 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
   int type;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
   int rarity;
 
   // Cooldown logic

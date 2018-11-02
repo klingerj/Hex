@@ -13,7 +13,7 @@ class HEX_API AGameManager : public AActor
 
 public:
 	// Sets default values for this actor's properties
-	AGameManager();
+    AGameManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -56,8 +56,14 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Game State")
   void SetTurnPlayerTile(AHexGridTile* targetMoveTile);
 
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  void SetStage(int32 s);
+
   UFUNCTION(BlueprintCallable, Category = "Player State")
   ASpell* GetCurrentlySelectedSpell() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Player State")
+  void CastSpell(int i);
 
   void RecomputeDjikstra();
 };

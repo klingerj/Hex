@@ -304,6 +304,7 @@ void AWizard::hotkeyOne() {
   UE_LOG(LogClass, Log, TEXT("Selected Spell 1"));
   hasCast = true;
   currentStage = AGameManager::TurnStage::SpellSelected;
+  gm->RecomputeDjikstra();
   // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
   // TODO: Incorporate range into whether or not a spell can be cast
   selectedSpell = 0;
