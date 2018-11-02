@@ -45,7 +45,7 @@ void AGameManager::Setup() {
         playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
 		playerOne->spawnInvAndSpellbook();
-
+    
         spawn = FVector(100, 100, 20.0f);
         playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
@@ -107,12 +107,12 @@ void AGameManager::Tick(float DeltaTime)
 
 		case TurnStage::Cast:
 			UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+			//turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Craft:
-			UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+			//UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
+			//turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Move:
@@ -123,7 +123,9 @@ void AGameManager::Tick(float DeltaTime)
       UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
       turnPlayer->currentStage = TurnStage::Listening;
       break;
-
+    case TurnStage::SpellSelected:
+        UE_LOG(LogClass, Log, TEXT("Player %d has selected spell %d"), int(turn) + 1, turnPlayer->selectedSpell);
+        break;
 		case TurnStage::End:
         // TODO: JOE: This checks win/loss conditions and ends the game
       if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {
@@ -193,4 +195,8 @@ bool AGameManager::GetTurn() const {
 
 AWizard* AGameManager::GetTurnPlayer() const {
     return turnPlayer;
+}
+
+ASpell* AGameManager::GetCurrentlySelectedSpell() const {
+    return turnPlayer->spellbook->readiedSpells[turnPlayer->selectedSpell];
 }

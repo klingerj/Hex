@@ -59,19 +59,21 @@ void UHexGridTileEffect::SetResource() {
         {
             TSubclassOf<class AMinorDamageBoost> dmgClass;
             resource = GetWorld()->SpawnActor<AMinorDamageBoost>(AMinorDamageBoost::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
-			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
+			      UE_LOG(LogClass, Log, TEXT("Created a minor damage boost"));
             break;
         }
         case 1:
+            UE_LOG(LogClass, Log, TEXT("type 0 rarity 1, which is nothing"));
             break;
         case 2:
         {
             TSubclassOf<class AMajorDamageBoost> dmgClass;
             resource = GetWorld()->SpawnActor<AMajorDamageBoost>(AMajorDamageBoost::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
-			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
+			      UE_LOG(LogClass, Log, TEXT("Created a major damage boost"));
             break;
         }
         case 3:
+            UE_LOG(LogClass, Log, TEXT("type 0 rarity 3, which is nothing"));
             break;
         }
         break;
@@ -81,33 +83,37 @@ void UHexGridTileEffect::SetResource() {
         {
             TSubclassOf<class AMinorAccuracyIncrease> accClass;
             resource = GetWorld()->SpawnActor<AMinorAccuracyIncrease>(AMinorAccuracyIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
-			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
+			      UE_LOG(LogClass, Log, TEXT("Created a minor accuracy increase"));
             break;
         }
         case 1:
+            UE_LOG(LogClass, Log, TEXT("type 1 rarity 1, which is nothing"));
             break;
         case 2:
         {
             TSubclassOf<class AMajorAccuracyIncrease> accClass;
             resource = GetWorld()->SpawnActor<AMajorAccuracyIncrease>(AMajorAccuracyIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
-			UE_LOG(LogClass, Log, TEXT("Tried to spawn a resource"));
+			      UE_LOG(LogClass, Log, TEXT("Created a major accuracy increase"));
             break;
         }
         case 3:
+            UE_LOG(LogClass, Log, TEXT("type 1 rarity 3, which is nothing"));
             break;
         }
         break;
     case 2:
         switch (rarity) {
         case 0:
-            //resource = new thingy;
+            UE_LOG(LogClass, Log, TEXT("type 2 rarity 0, which is nothing"));
             break;
         case 1:
+            UE_LOG(LogClass, Log, TEXT("type 2 rarity 1, which is nothing"));
             break;
         case 2:
-            //resource = new thingy;
+            UE_LOG(LogClass, Log, TEXT("type 2 rarity 2, which is nothing"));
             break;
         case 3:
+            UE_LOG(LogClass, Log, TEXT("type 2 rarity 3, which is nothing"));
             break;
         }
         break;

@@ -72,6 +72,7 @@ public:
 	ASpellbook* spellbook;
 	TSubclassOf<class ASpellbook> SBookClass;
   void showSpellbook();
+  int selectedSpell;
 
 	AWizard* other;
 	AGameManager* gm;

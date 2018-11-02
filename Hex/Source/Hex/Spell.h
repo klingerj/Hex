@@ -48,7 +48,9 @@ public:
 	int accuracy;
 	// Number of tiles representing how far from the player the spell can be cast/will reach
 	int originalRange;
-	int range;
+	
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+  int range;
 
 	/// PROPERTIES OF SOME SPELLS -- All spells will have these fields, but they will be accessed based on the "type" variable
 	// How much damage this does on hit (range)
