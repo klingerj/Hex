@@ -118,12 +118,10 @@ void AWizard::applyTileEffects() {
 	  if (currTile) {
 		  if (currTile->hexGridTileEffect) {
 
-		  }
-		  else {
+		  } else {
 			  UE_LOG(LogClass, Log, TEXT(""));
 		  }
-	  }
-	  else {
+	  } else {
 		  UE_LOG(LogClass, Log, TEXT("currtile was null"));
 	  }
       AResource* res = currTile->hexGridTileEffect->resource;
