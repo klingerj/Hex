@@ -7,7 +7,8 @@
 AWizard::AWizard() : AWizard(WizardClass::AllAround) {}
 
 // Sets default values
-AWizard::AWizard(WizardClass className) : hasCast(false), hasCrafted(false), hasMoved(false), currentStage(AGameManager::ApplyEffects), other(nullptr), displayControls(false), charClass(className)
+AWizard::AWizard(WizardClass className) : hasCast(false), hasCrafted(false), hasMoved(false), currentStage(AGameManager::ApplyEffects), other(nullptr), displayControls(false), charClass(className),
+outgoingDamageBuff(0), incomingDamageBuff(0), outgoingAccuracyBuff(0)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -74,22 +75,24 @@ void AWizard::spawnInvAndSpellbook() {
 		// TODO: Finish filling in after more spells are created
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
-			// All-Around: Minor Fire attack
+			// All-Around: Minor Fire Attack, ???, ???
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
 				break;
-
+			// Buff/Debuff: ???, ???, ???
 			case WizardClass::BuffDebuff:
 				break;
 
-			// Glass Cannon: Minor Electric attack
+			// Glass Cannon: Minor Electric Attack, ???, ???
 			case WizardClass::GlassCannon:
 				spellArr.at(0) = World->SpawnActor<AMinorElectricDamage>(AMinorElectricDamage::StaticClass(), spawn, FRotator(0.0f));
 				break;
 
+			// Scout: ???, ???, ???
 			case WizardClass::Scout:
 				break;
 
+			// Tank: ???, ???, ???
 			case WizardClass::Tank:
 				break;
 		}
@@ -121,10 +124,10 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Spell4", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFour);
 	PlayerInputComponent->BindAction("Spell5", EInputEvent::IE_Pressed, this, &AWizard::hotkeyFive);
 
-  // UI hotkeys
-  PlayerInputComponent->BindAction("DisplayControls", EInputEvent::IE_Pressed, this, &AWizard::ToggleControlDisplay);
-  //PlayerInputComponent->BindAction("Spellbook", EInputEvent::IE_Pressed, this, &AWizard::showSpellbook);
-  //PlayerInputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AWizard::showInventory);
+	// UI hotkeys
+	PlayerInputComponent->BindAction("DisplayControls", EInputEvent::IE_Pressed, this, &AWizard::ToggleControlDisplay);
+	PlayerInputComponent->BindAction("Spellbook", EInputEvent::IE_Pressed, this, &AWizard::showSpellbook);
+	PlayerInputComponent->BindAction("Inventory", EInputEvent::IE_Pressed, this, &AWizard::showInventory);
 }
 
 /// GAMEPLAY FUNCTIONS
@@ -240,20 +243,8 @@ void AWizard::ToggleControlDisplay() {
     }
 }
 
-// TODO: JOE: These two functions bring up the spellbook and inventory on hotkey presses
-void AWizard::showSpellbook() {
-    FText header = FText::FromString("SPELLBOOK");
-    std::string contents = "";
-
-    for (int i = 0; i < 5; ++i) {
-        ASpell* s = spellbook->readiedSpells.at(i);
-        contents += "Slot " + std::to_string(i) + ": " + s->name + "\n\t" + s->description + "\n\n";
-    }
-
-    FString fContents = contents.c_str();
-    FMessageDialog::Debugf(FText::FromString(fContents), &header);
-}
-
+// TODO: @Spencer, this is currently bugged in that it attempts to access a protected memory address (and it's also basic/boring). 
+//		Can you make a clickable inventory UI and have this function bring it up? Right now, this function is bound to the B key.
 void AWizard::showInventory() {
     FText header = FText::FromString("INVENTORY");
     std::string contents = "";
@@ -280,6 +271,22 @@ void AWizard::showInventory() {
     FMessageDialog::Debugf(FText::FromString(fContents), &header);
 }
 
+// TODO: @Spencer, this is probably also bugged like the inventory function, but I haven't tested it. 
+//		Can you make a spell bar UI that sits at the bottom of the screen (similar to the one in League) and shows icons (if it's not too hard)
+//		of what spells are ready and which key (1-5) they're bound to?
+void AWizard::showSpellbook() {
+	FText header = FText::FromString("SPELLBOOK");
+	std::string contents = "";
+
+	for (int i = 0; i < 5; ++i) {
+		ASpell* s = spellbook->readiedSpells.at(i);
+		contents += "Slot " + std::to_string(i) + ": " + s->name + "\n\t" + s->description + "\n\n";
+	}
+
+	FString fContents = contents.c_str();
+	FMessageDialog::Debugf(FText::FromString(fContents), &header);
+}
+
 bool AWizard::GetDisplayControls() {
     return displayControls;
 }
@@ -291,11 +298,6 @@ void AWizard::hotkeyOne() {
 	}
 
 	hasCast = true;
-
-	// TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
-	// TODO: Incorporate range into whether or not a spell can be cast
-	int dmg = spellbook->readiedSpells.at(0)->cast();
-	other->health -= dmg;
 }
 
 void AWizard::hotkeyTwo() {
@@ -304,9 +306,6 @@ void AWizard::hotkeyTwo() {
 	}
 
   hasCast = true;
-
-	int dmg = spellbook->readiedSpells.at(1)->cast();
-  other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
@@ -315,9 +314,6 @@ void AWizard::hotkeyThree() {
 	}
 
 	hasCast = true;
-
-	int dmg = spellbook->readiedSpells.at(2)->cast();
-	other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
@@ -326,9 +322,6 @@ void AWizard::hotkeyFour() {
 	}
 
 	hasCast = true;
-
-	int dmg = spellbook->readiedSpells.at(3)->cast();
-	other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
@@ -337,7 +330,45 @@ void AWizard::hotkeyFive() {
 	}
 
 	hasCast = true;
+}
 
-	int dmg = spellbook->readiedSpells.at(4)->cast();
-	other->health -= dmg;
+// TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes an argument since they all do the same thing
+void AWizard::spellOne() {
+	SpellResult r = spellbook->readiedSpells.at(0)->cast();
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
+}
+
+void AWizard::spellTwo() {
+	SpellResult r = spellbook->readiedSpells.at(1)->cast();
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
+}
+
+void AWizard::spellThree() {
+	SpellResult r = spellbook->readiedSpells.at(2)->cast();
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
+}
+
+void AWizard::spellFour() {
+	SpellResult r = spellbook->readiedSpells.at(3)->cast();
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
+}
+
+void AWizard::spellFive() {
+	SpellResult r = spellbook->readiedSpells.at(4)->cast();
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
 }

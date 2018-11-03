@@ -4,11 +4,16 @@
 
 #include <string>
 #include <ctime>
+#include <tuple>
 #include "MessageDialog.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Spell.generated.h"
+
+// Spells will return 4 integers as follows: (damageDone, accuracyBuff, incomingDamageBuff, outgoingDamageBuff)
+// damageDone directly represents the damage; the other 3 are ints representing a percentage boost
+typedef std::tuple<int, int, int, int> SpellResult;
 
 UCLASS()
 class HEX_API ASpell : public AActor
@@ -58,7 +63,7 @@ public:
 	int areaOfEffect;
 
 	/// SPELL FUNCTIONS
-	virtual int cast();
+	virtual SpellResult cast();
 
 	/// UTILITY FUNCTIONS
 	std::string elementToString();
