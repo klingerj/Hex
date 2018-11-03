@@ -101,12 +101,12 @@ void AGameManager::Tick(float DeltaTime)
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
 		case TurnStage::ApplyEffects:
-			UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
 			turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Cast:
-			UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
+			//UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
 			//turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
@@ -116,7 +116,7 @@ void AGameManager::Tick(float DeltaTime)
 			break;
 
 		case TurnStage::Move:
-		  UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+		  //UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
 			break;
     
     case TurnStage::MoveEnd:
