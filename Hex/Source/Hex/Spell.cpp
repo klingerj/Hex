@@ -32,17 +32,16 @@ void ASpell::Tick(float DeltaTime)
 
 }
 
-int ASpell::cast() {
+SpellResult ASpell::cast() {
 	int randCast = (rand() / RAND_MAX) % 100; // 0 to 99
 	if (randCast >= accuracy) {
 		// You failed to cast the spell!
 		FMessageDialog::Debugf(FText::FromString("Failed to cast spell!"));
-		return 1;
+		return std::make_tuple(1, 1, 1, 1);
 	}
 
-	return 0;
+	return std::make_tuple(0, 0, 0, 0);
 	// Further implemented in subclasses
-
 }
 
 std::string ASpell::elementToString() {

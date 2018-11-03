@@ -6,17 +6,17 @@ AMinorFireDamage::AMinorFireDamage() : ASpell(Element::Fire, SpellType::Damage, 
     description = "Element: Fire, Damage: 10 - 20, Accuracy: 70%, Range: 5";
 }
 
-// Returns the amount of damage done to the opponent
-int AMinorFireDamage::cast() {
-	int damage = 0;
-	switch (ASpell::cast()) {
+SpellResult AMinorFireDamage::cast() {
+	SpellResult result(0,0,0,0);
+
+	switch (std::get<0>(ASpell::cast())) {
 	case 0:
 		srand(time(nullptr));
-		damage = rand() % (damageMax - damageMin) + damageMin;
+		std::get<0>(result) = rand() % (damageMax - damageMin) + damageMin;
 		break;
 	case 1:
 		// Failed to cast spell
-		damage = 0;
+		std::get<0>(result) = 0;
 		break;
 	}
 
@@ -26,5 +26,5 @@ int AMinorFireDamage::cast() {
 	damageMax = originalMax;
 	range = originalRange;
 
-	return damage;
+	return result;
 }

@@ -18,5 +18,5 @@ public:
 	AMinorFireDamage();
 
 public:
-	virtual int cast() override;
+	virtual SpellResult cast() override;
 };

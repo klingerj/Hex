@@ -46,11 +46,22 @@ public:
 	void hotkeyThree();
 	void hotkeyFour();
 	void hotkeyFive();
+	// Extra functions that correspond to hotkeys; blueprint callable
+	UFUNCTION(BlueprintCallable, Category = "Game State")
+	void spellOne();
+	UFUNCTION(BlueprintCallable, Category = "Game State")
+	void spellTwo();
+	UFUNCTION(BlueprintCallable, Category = "Game State")
+	void spellThree();
+	UFUNCTION(BlueprintCallable, Category = "Game State")
+	void spellFour();
+	UFUNCTION(BlueprintCallable, Category = "Game State")
+	void spellFive();
 
 	/// STATE VARIABLES
 	WizardClass charClass;
 	// Current stats (modified by spells)
-	int health, speed;
+	int health, speed, outgoingDamageBuff, incomingDamageBuff, outgoingAccuracyBuff;
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   int GetHealth() const;
@@ -68,9 +79,9 @@ public:
 	AGameManager::TurnStage currentStage;
 	// Maintain an inventory of collected resources
 	AInventory* inventory;
-	TSubclassOf<class AInventory> InvClass;
-  void showInventory();
+	void showInventory();
 
+	// Maintain a list of spells the player is able to cast
 	ASpellbook* spellbook;
 	TSubclassOf<class ASpellbook> SBookClass;
   void showSpellbook();

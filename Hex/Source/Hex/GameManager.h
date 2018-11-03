@@ -63,6 +63,9 @@ public:
   ASpell* GetCurrentlySelectedSpell() const;
 
   UFUNCTION(BlueprintCallable, Category = "Player State")
+  int GetCurrentlySelectedSpellIndex() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Player State")
   void CastSpell(int i);
 
   void RecomputeDjikstra();

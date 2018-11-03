@@ -7,16 +7,16 @@ AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, Spel
 }
 
 // Returns the amount of damage done to the opponent
-int AMinorElectricDamage::cast() {
-	int damage = 0;
-	switch (ASpell::cast()) {
+SpellResult AMinorElectricDamage::cast() {
+	SpellResult result(0, 0, 0, 0);
+	switch (std::get<0>(ASpell::cast())) {
 	case 0:
 		srand(time(nullptr));
-		damage = rand() % (damageMax - damageMin) + damageMin;
+		std::get<0>(result) = rand() % (damageMax - damageMin) + damageMin;
 		break;
 	case 1:
 		// Failed to cast spell
-		damage = 0;
+		std::get<0>(result) = 0;
 		break;
 	}
 
@@ -26,7 +26,7 @@ int AMinorElectricDamage::cast() {
 	damageMax = originalMax;
 	range = originalRange;
 
-	return damage;
+	return result;
 }
 
 

@@ -127,23 +127,25 @@ void AGameManager::Tick(float DeltaTime)
         UE_LOG(LogClass, Log, TEXT("Player %d has selected spell %d"), int(turn) + 1, turnPlayer->selectedSpell);
         break;
 		case TurnStage::End:
-        // TODO: JOE: This checks win/loss conditions and ends the game
-      if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {
-          FText header = FText::FromString("GAME OVER");
-          std::string msg = "Player " + std::to_string(turn + 1) + " wins!";
-          FString fMsg = msg.c_str();
-          FMessageDialog::Debugf(FText::FromString(fMsg), &header);
-          // TODO: Return to start menu; temporary fix is to just quit the application
-          exit(0);
-      }
+			// TODO: Check that this works as intended
+			if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {
+				FText header = FText::FromString("GAME OVER");
+				std::string msg = "Player " + std::to_string(turn + 1) + " wins!";
+				FString fMsg = msg.c_str();
+				FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+
+				// TODO: Return to start menu; temporary fix is to just quit the application
+				exit(0);
+			}
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
 			turn = !turn;
-      turnCounter++;
+			turnCounter++;
 
 			turnPlayer = (turn) ? (playerTwo) : (playerOne);
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
-      RecomputeDjikstra();
+
+			RecomputeDjikstra();
 
 			//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
 			//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
@@ -205,22 +207,26 @@ ASpell* AGameManager::GetCurrentlySelectedSpell() const {
     return turnPlayer->spellbook->readiedSpells[turnPlayer->selectedSpell];
 }
 
+int AGameManager::GetCurrentlySelectedSpellIndex() const {
+    return turnPlayer->selectedSpell;
+}
+
 void AGameManager::CastSpell(int i) {
-    /*switch (i) {
+    switch (i) {
     case 0:
-        turnPlayer->CastSpellOne();
+        turnPlayer->spellOne();
         break;
     case 1:
-        turnPlayer->CastSpellTwo();
+        turnPlayer->spellTwo();
         break;
     case 2:
-        turnPlayer->CastSpellThree();
+        turnPlayer->spellThree();
         break;
     case 3:
-        turnPlayer->CastSpellFour();
+        turnPlayer->spellFour();
         break;
     case 4:
-        turnPlayer->CastSpellFive();
+        turnPlayer->spellFive();
         break;
-    }*/
+    }
 }
