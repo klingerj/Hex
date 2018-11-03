@@ -40,13 +40,13 @@ void AGameManager::Setup() {
         SpawnParams.Owner = this;
         SpawnParams.Instigator = Instigator;
 
-        FVector spawn(500, 500, 20.0f);
+        FVector spawn(500, 500, 400.0f);
 
         playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
 		playerOne->spawnInvAndSpellbook();
     
-        spawn = FVector(100, 100, 20.0f);
+        spawn = FVector(100, 100, 400.0f);
         playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
 		playerTwo->spawnInvAndSpellbook();
@@ -64,8 +64,8 @@ void AGameManager::Setup() {
                 playerTwo->currentTile = *actorIter;
             }
         }
-        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
-        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 400)));
+        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 400)));
     }
 
     playerOne->Tags.Add(FName("Player One"));
