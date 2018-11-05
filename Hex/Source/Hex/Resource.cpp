@@ -44,3 +44,11 @@ int AResource::applyEffect(ASpell& s) const {
 const int AResource::getID() const {
     return -1;
 }
+
+int AResource::GetRarity() const {
+    return rarity;
+}
+
+void AResource::SetRarity(int r) {
+    rarity = (Rarity)r;
+}

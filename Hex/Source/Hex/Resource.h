@@ -38,6 +38,12 @@ public:
 	// How rare is this resource? Higher rarity => appears less frequently but is more powerful
 	Rarity rarity;
 
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  int GetRarity() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  void SetRarity(int r);
+
 	// Total number of unique resources is at least (num of EffectTypes) * (num of Rarities)
 
 	// Virtual function of the actual effect; to be specified in the individual resource subclasses
