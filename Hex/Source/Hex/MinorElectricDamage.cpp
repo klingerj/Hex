@@ -2,8 +2,8 @@
 
 #include "MinorElectricDamage.h"
 
-AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Minor Shock", 20, 30, 55, 5, 1) {
-    description = "Element: Electricity, Damage: 20 - 30, Accuracy: 55%, Range: 5";
+AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Shock", 20, 30, 55, 2, 1) {
+    description = "Element: Electricity, Damage: 20 - 30, Accuracy: 55%, Range: 2";
 }
 
 // Returns the amount of damage done to the opponent
@@ -21,6 +21,7 @@ SpellResult AMinorElectricDamage::cast() {
 	}
 
 	// Remove resource-based bonuses
+	// TODO: Delete these lines if we want resource boosts to be permanent
 	accuracy = originalAccuracy;
 	damageMin = originalMin;
 	damageMax = originalMax;

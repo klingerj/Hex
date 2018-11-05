@@ -73,26 +73,27 @@ void AWizard::spawnInvAndSpellbook() {
 		
 		// Fill spellbook with appropriate starting spells
 		// TODO: Finish filling in after more spells are created
+		// TODO: Reduce range of spells; 5 is too high. 2 should be good for weaker ones, 3 for stronger
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
-			// All-Around: Minor Fire Attack, ???, ???
+			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
 				break;
-			// Buff/Debuff: ???, ???, ???
+			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
 			case WizardClass::BuffDebuff:
 				break;
 
-			// Glass Cannon: Minor Electric Attack, ???, ???
+			// Glass Cannon: Minor Electric Attack, Minor Outgoing Damage Boost, Minor Outgoing Accuracy Boost
 			case WizardClass::GlassCannon:
 				spellArr.at(0) = World->SpawnActor<AMinorElectricDamage>(AMinorElectricDamage::StaticClass(), spawn, FRotator(0.0f));
 				break;
 
-			// Scout: ???, ???, ???
+			// Scout: Minor Incoming Damage Decrease, Minor Fire Attack, ??? (speed boost or offensive terrain)
 			case WizardClass::Scout:
 				break;
 
-			// Tank: ???, ???, ???
+			// Tank: Minor Incoming Damage Decrease, Minor Earth Attack, ??? (defensive terrain)
 			case WizardClass::Tank:
 				break;
 		}
@@ -332,43 +333,169 @@ void AWizard::hotkeyFive() {
 	hasCast = true;
 }
 
-// TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes an argument since they all do the same thing
+// TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes the index as an argument since they all do the same thing
 void AWizard::spellOne() {
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
+	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		// Apply buffs/debuffs; note that only one can be applied at a time
+		// TODO: Do we want buffs/debuffs to stack? If so, change all = to += in the branching statements
+		// Outgoing accuracy buff/debuff
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		
+		// Incoming damage buff/debuff
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+		
+		// Outgoing damage buff/debuff
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellTwo() {
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellThree() {
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellFour() {
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellFive() {
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
