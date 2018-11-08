@@ -552,8 +552,40 @@ void AWizard::spellFour() {
 
 void AWizard::spellFive() {
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
