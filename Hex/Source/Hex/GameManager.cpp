@@ -53,8 +53,8 @@ void AGameManager::Setup() {
 
         uint32 playerOneGridIndexX = 0;
         uint32 playerOneGridIndexY = 0;
-        uint32 playerTwoGridIndexX = 10;
-        uint32 playerTwoGridIndexY = 10;
+        uint32 playerTwoGridIndexX = 3;
+        uint32 playerTwoGridIndexY = 3;
 
         for (TActorIterator<AHexGridTile> actorIter(World); actorIter; ++actorIter) {
             if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
