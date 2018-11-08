@@ -23,5 +23,7 @@ SpellResult AMajorIncreaseOutgoingDamage::cast() {
 	return result;
 }
 
-
+int AMajorIncreaseOutgoingDamage::getSpellID() {
+	return 15;
+}
 

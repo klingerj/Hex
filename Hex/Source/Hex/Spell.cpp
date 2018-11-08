@@ -33,7 +33,7 @@ void ASpell::Tick(float DeltaTime)
 }
 
 SpellResult ASpell::cast() {
-	int randCast = (rand() / RAND_MAX) % 100; // 0 to 99
+	int randCast = rand() % 100; // 0 to 99
 	if (randCast >= accuracy) {
 		// You failed to cast the spell!
 		FMessageDialog::Debugf(FText::FromString("Failed to cast spell!"));

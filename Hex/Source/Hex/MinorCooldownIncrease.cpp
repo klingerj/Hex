@@ -29,4 +29,6 @@ SpellResult AMinorCooldownIncrease::cast() {
 	return result;
 }
 
-
+int AMinorCooldownIncrease::getSpellID() {
+	return 8;
+}

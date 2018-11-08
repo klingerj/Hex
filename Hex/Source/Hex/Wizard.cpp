@@ -212,7 +212,6 @@ void AWizard::craftSpell() {
 	UE_LOG(LogClass, Log, TEXT("CRAFT"));
 
 	// Craft something
-	// TODO: spellbook->modifyExistingSpell(inventory, selectedResource, selectedSpell); need to prompt for selectedResource and selectedSpell
 
 	hasCrafted = true;
 	currentStage = AGameManager::TurnStage::Craft;
@@ -329,7 +328,6 @@ void AWizard::hotkeyOne() {
   hasCast = true;
   currentStage = AGameManager::TurnStage::SpellSelected;
   gm->RecomputeDjikstra();
-  // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
   // TODO: Incorporate range into whether or not a spell can be cast
   selectedSpell = 0;
 	//int dmg = spellbook->readiedSpells.at(0)->cast();
@@ -383,22 +381,29 @@ void AWizard::hotkeyFive() {
 }
 
 void AWizard::spellOne() {
-  UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
+	UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
+
+	// Apply accuracy boost
+	spellbook->readiedSpells.at(0)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+	// Cast
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
 
-	// TODO: Uncomment this once a getElement() function is written for each tile; potentially add condition that tile can't be on cooldown to earn bonus
-	// Apply tile element bonus
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	// Reset outgoing accuracy buff no matter what
+	this->outgoingAccuracyBuff = 0;
 
-	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
+	// TODO: Fix if needed based on Joe's feedback
+	// If we're standing on a tile that's the same element as the spell we're casting, boost each aspect
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
 	if (std::get<0>(r) > 0) {
-		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
 		other->incomingDamageBuff = 0;
 	}
@@ -431,14 +436,18 @@ void AWizard::spellOne() {
 }
 
 void AWizard::spellTwo() {
+	spellbook->readiedSpells.at(1)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -471,14 +480,18 @@ void AWizard::spellTwo() {
 }
 
 void AWizard::spellThree() {
+	spellbook->readiedSpells.at(2)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -511,14 +524,18 @@ void AWizard::spellThree() {
 }
 
 void AWizard::spellFour() {
+	spellbook->readiedSpells.at(3)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -551,14 +568,18 @@ void AWizard::spellFour() {
 }
 
 void AWizard::spellFive() {
+	spellbook->readiedSpells.at(4)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {

@@ -27,4 +27,6 @@ SpellResult AMajorCooldownIncrease::cast() {
 	return result;
 }
 
-
+int AMajorCooldownIncrease::getSpellID() {
+	return 11;
+}

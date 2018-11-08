@@ -23,4 +23,6 @@ SpellResult AMinorDecreaseOutgoingAccuracy::cast() {
 	return result;
 }
 
-
+int AMinorDecreaseOutgoingAccuracy::getSpellID() {
+	return 17;
+}

@@ -23,4 +23,6 @@ SpellResult AMinorEarthDamage::cast() {
 	return result;
 }
 
-
+int AMinorEarthDamage::getSpellID() {
+	return 9;
+}

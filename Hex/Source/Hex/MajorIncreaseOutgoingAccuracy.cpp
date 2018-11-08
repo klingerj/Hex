@@ -23,4 +23,6 @@ SpellResult AMajorIncreaseOutgoingAccuracy::cast() {
 	return result;
 }
 
-
+int AMajorIncreaseOutgoingAccuracy::getSpellID() {
+	return 14;
+}
