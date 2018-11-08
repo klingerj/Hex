@@ -32,6 +32,9 @@ public:
 
   int turnCounter;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+  bool turnSwapped;
+
   UFUNCTION(BlueprintCallable, Category = "Game State")
   int GetTurnCounter() const;
 
