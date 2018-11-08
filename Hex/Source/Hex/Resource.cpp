@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Resource.h"
+#include "HexGridTileEffect.h"
 
 // Sets default values
 AResource::AResource() : AResource(EffectType::Damage, Rarity::Common) {}
 
-AResource::AResource(EffectType e, Rarity r) : affectedStat(e), rarity(r) {
+AResource::AResource(EffectType e, Rarity r) : affectedStat(e), rarity(r), hexGridTileEffect(nullptr) {
 
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -42,5 +43,24 @@ int AResource::applyEffect(ASpell& s) const {
 }
 
 const int AResource::getID() const {
+    return -1;
+}
+
+int AResource::GetRarity() const {
+    return rarity;
+}
+
+void AResource::SetRarity() {
+    if (hexGridTileEffect) {
+        rarity = (Rarity)hexGridTileEffect->rarity;
+        UE_LOG(LogClass, Log, TEXT("Set resource rarity"));
+    }
+    UE_LOG(LogClass, Log, TEXT("tile effect ptr is nullptr"));
+}
+
+int AResource::GetType() const {
+    if (hexGridTileEffect) {
+        return hexGridTileEffect->type;
+    }
     return -1;
 }

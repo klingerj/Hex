@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "Resource.generated.h"
 
+class UHexGridTileEffect;
+
 UCLASS()
 class HEX_API AResource : public AActor
 {
@@ -37,6 +39,17 @@ public:
 
 	// How rare is this resource? Higher rarity => appears less frequently but is more powerful
 	Rarity rarity;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  int GetRarity() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  void SetRarity();
+
+  UHexGridTileEffect* hexGridTileEffect;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  int GetType() const;
 
 	// Total number of unique resources is at least (num of EffectTypes) * (num of Rarities)
 

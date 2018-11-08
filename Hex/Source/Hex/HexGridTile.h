@@ -8,6 +8,8 @@
 #include "HexGridTileEffect.h"
 #include "HexGridTile.generated.h"
 
+enum Element {FIRE = 0, WATER = 1, GROUND = 2, AIR = 3};
+
 UCLASS()
 class HEX_API AHexGridTile : public AActor
 {
@@ -36,6 +38,9 @@ public:
   bool onShortestPath;
 
   void ClearPrevNodes();
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+  int element;
 
   // Blueprint variables
   uint32 gridIndexX, gridIndexY;

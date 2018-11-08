@@ -293,27 +293,53 @@ bool AWizard::GetDisplayControls() {
 
 /// SPELL HOTKEY FUNCTIONS
 void AWizard::hotkeyOne() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-
-	hasCast = true;
+    if (this != gm->turnPlayer) {
+        other->hotkeyOne();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 1"));
+  hasCast = true;
+  currentStage = AGameManager::TurnStage::SpellSelected;
+  gm->RecomputeDjikstra();
+  // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+  // TODO: Incorporate range into whether or not a spell can be cast
+  selectedSpell = 0;
+	//int dmg = spellbook->readiedSpells.at(0)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyTwo() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
-
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 2"));
   hasCast = true;
+  selectedSpell = 1;
+	//int dmg = spellbook->readiedSpells.at(1)->cast();
+  //other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 3"));
+  hasCast = true;
 
-	hasCast = true;
+  selectedSpell = 2;
+	//int dmg = spellbook->readiedSpells.at(2)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
@@ -321,19 +347,27 @@ void AWizard::hotkeyFour() {
 		return;
 	}
 
-	hasCast = true;
+  hasCast = true;
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 4"));
+  selectedSpell = 3;
+	//int dmg = spellbook->readiedSpells.at(3)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
-
-	hasCast = true;
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 5"));
+  hasCast = true;
+  selectedSpell = 4;
+	//int dmg = spellbook->readiedSpells.at(4)->cast();
+	//other->health -= dmg;
 }
 
 // TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes an argument since they all do the same thing
 void AWizard::spellOne() {
+  UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
 	other->health -= std::get<0>(r);
 	this->outgoingAccuracyBuff = std::get<1>(r);

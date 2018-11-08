@@ -40,21 +40,21 @@ void AGameManager::Setup() {
         SpawnParams.Owner = this;
         SpawnParams.Instigator = Instigator;
 
-        FVector spawn(500, 500, 20.0f);
+        FVector spawn(500, 500, 40000.0f);
 
         playerOne = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
 		playerOne->spawnInvAndSpellbook();
-
-        spawn = FVector(100, 100, 20.0f);
+    
+        spawn = FVector(100, 100, 40000.0f);
         playerTwo = World->SpawnActor<AWizard>(WizClass, spawn, FRotator(0.0f));
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a wizard"));
 		playerTwo->spawnInvAndSpellbook();
 
         uint32 playerOneGridIndexX = 0;
         uint32 playerOneGridIndexY = 0;
-        uint32 playerTwoGridIndexX = 10;
-        uint32 playerTwoGridIndexY = 10;
+        uint32 playerTwoGridIndexX = 3;
+        uint32 playerTwoGridIndexY = 3;
 
         for (TActorIterator<AHexGridTile> actorIter(World); actorIter; ++actorIter) {
             if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
@@ -64,8 +64,8 @@ void AGameManager::Setup() {
                 playerTwo->currentTile = *actorIter;
             }
         }
-        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 20)));
-        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 20)));
+        playerOne->SetActorLocation(FVector(playerOne->currentTile->GetActorLocation() + FVector(0, 0, 50)));
+        playerTwo->SetActorLocation(FVector(playerTwo->currentTile->GetActorLocation() + FVector(0, 0, 50)));
     }
 
     playerOne->Tags.Add(FName("Player One"));
@@ -101,18 +101,21 @@ void AGameManager::Tick(float DeltaTime)
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
 		case TurnStage::ApplyEffects:
-			UE_LOG(LogClass, Log, TEXT("Applied effects for Player %d"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
-			break;
-
+    {
+        if (!turnPlayer->currentTile->hexGridTileEffect->IsOnCooldown()) { // if the tile is not on cooldown
+            turnPlayer->currentTile->hexGridTileEffect->ResetCooldown(); // pretend we collected a resource
+        }
+        turnPlayer->currentStage = TurnStage::Listening;
+        break;
+    }
 		case TurnStage::Cast:
-			UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+			//UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
+			//turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Craft:
-			UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
-			turnPlayer->currentStage = TurnStage::Listening;
+			//UE_LOG(LogClass, Log, TEXT("Player %d crafted a spell"), int(turn) + 1);
+			//turnPlayer->currentStage = TurnStage::Listening;
 			break;
 
 		case TurnStage::Move:
@@ -123,7 +126,9 @@ void AGameManager::Tick(float DeltaTime)
       UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
       turnPlayer->currentStage = TurnStage::Listening;
       break;
-
+    case TurnStage::SpellSelected:
+        UE_LOG(LogClass, Log, TEXT("Player %d has selected spell %d"), int(turn) + 1, turnPlayer->selectedSpell);
+        break;
 		case TurnStage::End:
 			// TODO: Check that this works as intended
 			if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {
@@ -137,6 +142,20 @@ void AGameManager::Tick(float DeltaTime)
 			}
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
+      // Advance the cooldown for all tiles
+        UE_LOG(LogClass, Log, TEXT("Advancing Cooldowns!"));
+
+        for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+            AHexGridTile* currentTile = *actorIter;
+            if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                UE_LOG(LogClass, Log, TEXT("About to advance cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+            }
+            currentTile->hexGridTileEffect->AdvanceCooldown();
+            if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                UE_LOG(LogClass, Log, TEXT("Advanced cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+            }
+        }
+
 			turn = !turn;
 			turnCounter++;
 			turnSwapped = true;
@@ -145,23 +164,22 @@ void AGameManager::Tick(float DeltaTime)
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
 			RecomputeDjikstra();
-
-			//turnPlayer->AutoPossessPlayer = EAutoReceiveInput::Player0;
-			//otherPlayer->AutoPossessPlayer = EAutoReceiveInput::Player1;
-
-			//UE_LOG(LogClass, Log, TEXT("Beginning turn for Player %d"), int(turn) + 1);
-
+      UE_LOG(LogClass, Log, TEXT("Tryna move to apply effects stage. Turn is: %d"), turn);
 			turnPlayer->currentStage = TurnStage::ApplyEffects;
 			break;
 
 		case TurnStage::Listening:
-			//UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
 }
 
 int32 AGameManager::GetStage() const {
     return turnPlayer->currentStage;
+}
+
+void AGameManager::SetStage(int32 s) {
+    turnPlayer->currentStage = (TurnStage)s;
 }
 
 AHexGridTile* AGameManager::GetTurnPlayerTile() const {
@@ -196,4 +214,32 @@ bool AGameManager::GetTurn() const {
 
 AWizard* AGameManager::GetTurnPlayer() const {
     return turnPlayer;
+}
+
+ASpell* AGameManager::GetCurrentlySelectedSpell() const {
+    return turnPlayer->spellbook->readiedSpells[turnPlayer->selectedSpell];
+}
+
+int AGameManager::GetCurrentlySelectedSpellIndex() const {
+    return turnPlayer->selectedSpell;
+}
+
+void AGameManager::CastSpell(int i) {
+    switch (i) {
+    case 0:
+        turnPlayer->spellOne();
+        break;
+    case 1:
+        turnPlayer->spellTwo();
+        break;
+    case 2:
+        turnPlayer->spellThree();
+        break;
+    case 3:
+        turnPlayer->spellFour();
+        break;
+    case 4:
+        turnPlayer->spellFive();
+        break;
+    }
 }
