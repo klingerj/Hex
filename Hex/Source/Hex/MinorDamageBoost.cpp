@@ -12,7 +12,7 @@ int AMinorDamageBoost::applyEffect(ASpell& s) const {
 			s.damageMin += boost;
 			s.damageMax += boost;
 
-			std::string msg = "The next time you cast " + s.name + ", it will deal " + std::to_string(s.damageMin) + " - " + std::to_string(s.damageMax) + " " + s.elementToString() + " damage!";
+			std::string msg = s.name + " will now deal " + std::to_string(s.damageMin) + " - " + std::to_string(s.damageMax) + " " + s.elementToString() + " damage!";
 			FString msgF(msg.c_str());
 			FText header = FText::FromString("SPELLCRAFT SUCCESSFUL");
 			FMessageDialog::Debugf(FText::FromString(msgF), &header);

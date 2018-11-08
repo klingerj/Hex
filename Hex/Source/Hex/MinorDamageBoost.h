@@ -18,7 +18,7 @@ public:
 	AMinorDamageBoost();
 	
 public:
-	const int boost = 10;
+	const int boost = 5;
 
   const static int id = 2;
 

@@ -72,29 +72,50 @@ void AWizard::spawnInvAndSpellbook() {
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a spellbook"));
 		
 		// Fill spellbook with appropriate starting spells
-		// TODO: Finish filling in after more spells are created
-		// TODO: Reduce range of spells; 5 is too high. 2 should be good for weaker ones, 3 for stronger
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
 			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
 			case WizardClass::BuffDebuff:
+				spellArr.at(0) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorDecreaseOutgoingDamage>(AMinorDecreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
 			// Glass Cannon: Minor Electric Attack, Minor Outgoing Damage Boost, Minor Outgoing Accuracy Boost
 			case WizardClass::GlassCannon:
 				spellArr.at(0) = World->SpawnActor<AMinorElectricDamage>(AMinorElectricDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingAccuracy>(AMinorIncreaseOutgoingAccuracy::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
 			// Scout: Minor Incoming Damage Decrease, Minor Fire Attack, ??? (speed boost or offensive terrain)
 			case WizardClass::Scout:
+				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), spawn, FRotator(0.0f)); // TODO: Replace with terrain spell
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
 			// Tank: Minor Incoming Damage Decrease, Minor Earth Attack, ??? (defensive terrain)
 			case WizardClass::Tank:
+				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = nullptr; // TODO: Replace with terrain spell
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 		}
 	}
@@ -243,9 +264,7 @@ void AWizard::ToggleControlDisplay() {
         other->ToggleControlDisplay();
     }
 }
-
-// TODO: @Spencer, this is currently bugged in that it attempts to access a protected memory address (and it's also basic/boring). 
-//		Can you make a clickable inventory UI and have this function bring it up? Right now, this function is bound to the B key.
+ 
 void AWizard::showInventory() {
     FText header = FText::FromString("INVENTORY");
     std::string contents = "";
@@ -272,9 +291,6 @@ void AWizard::showInventory() {
     FMessageDialog::Debugf(FText::FromString(fContents), &header);
 }
 
-// TODO: @Spencer, this is probably also bugged like the inventory function, but I haven't tested it. 
-//		Can you make a spell bar UI that sits at the bottom of the screen (similar to the one in League) and shows icons (if it's not too hard)
-//		of what spells are ready and which key (1-5) they're bound to?
 void AWizard::showSpellbook() {
 	FText header = FText::FromString("SPELLBOOK");
 	std::string contents = "";
@@ -333,7 +349,6 @@ void AWizard::hotkeyFive() {
 	hasCast = true;
 }
 
-// TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes the index as an argument since they all do the same thing
 void AWizard::spellOne() {
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
 	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
@@ -345,7 +360,6 @@ void AWizard::spellOne() {
 	}
 	else {
 		// Apply buffs/debuffs; note that only one can be applied at a time
-		// TODO: Do we want buffs/debuffs to stack? If so, change all = to += in the branching statements
 		// Outgoing accuracy buff/debuff
 		if (std::get<1>(r) < 0) {
 			other->outgoingAccuracyBuff = std::get<1>(r);

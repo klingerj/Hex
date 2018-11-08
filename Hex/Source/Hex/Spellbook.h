@@ -9,6 +9,23 @@
 
 #include "MinorFireDamage.h"
 #include "MinorElectricDamage.h"
+#include "MinorWaterDamage.h"
+#include "MinorEarthDamage.h"
+
+#include "MajorDecreaseOutgoingAccuracy.h"
+#include "MajorIncreaseOutgoingAccuracy.h"
+#include "MinorDecreaseOutgoingAccuracy.h"
+#include "MinorIncreaseOutgoingAccuracy.h"
+
+#include "MajorDecreaseOutgoingDamage.h"
+#include "MajorIncreaseOutgoingDamage.h"
+#include "MinorDecreaseOutgoingDamage.h"
+#include "MinorIncreaseOutgoingDamage.h"
+
+#include "MajorReduceIncomingDamage.h"
+#include "MinorReduceIncomingDamage.h"
+
+
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
