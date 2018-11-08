@@ -20,13 +20,6 @@ SpellResult AMinorElectricDamage::cast() {
 		break;
 	}
 
-	// Remove resource-based bonuses
-	// TODO: Delete these lines if we want resource boosts to be permanent
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
-
 	return result;
 }
 

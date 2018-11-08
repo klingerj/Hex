@@ -2,7 +2,7 @@
 
 #include "MinorIncreaseOutgoingDamage.h"
 
-AMinorIncreaseOutgoingDamage::AMinorIncreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Minor Overcharge", 0, 0, 100, 1, 1) {
+AMinorIncreaseOutgoingDamage::AMinorIncreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Enhance", 0, 0, 100, 1, 1) {
 	description = "Element: Water, Outgoing Damage Boost: 10%, Accuracy: 100%, Range: 1";
 }
 
@@ -19,12 +19,6 @@ SpellResult AMinorIncreaseOutgoingDamage::cast() {
 		std::get<3>(result) = 0;
 		break;
 	}
-
-	// Remove resource-based bonuses
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
 
 	return result;
 }

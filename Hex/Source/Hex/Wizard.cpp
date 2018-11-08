@@ -77,8 +77,8 @@ void AWizard::spawnInvAndSpellbook() {
 			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(1) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(2) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(3) = nullptr;
 				spellArr.at(4) = nullptr;
 				break;
@@ -269,23 +269,23 @@ void AWizard::showInventory() {
     FText header = FText::FromString("INVENTORY");
     std::string contents = "";
 
-    for (int i = 0; i < inventory->inventory.size(); ++i) {
-        int quant = inventory->inventory.at(i);
-        switch (i) {
-        case 0:
-            contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
-            break;
-        case 1:
-            contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
-            break;
-        case 2:
-            contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
-            break;
-        case 3:
-            contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
-            break;
-        }
-    }
+    //for (int i = 0; i < inventory->inventory.size(); ++i) {
+    //    int quant = inventory->inventory.at(i);
+    //    switch (i) {
+    //    case 0:
+    //        contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
+    //        break;
+    //    case 1:
+    //        contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
+    //        break;
+    //    case 2:
+    //        contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
+    //        break;
+    //    case 3:
+    //        contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
+    //        break;
+    //    }
+    //}
 
     FString fContents = contents.c_str();
     FMessageDialog::Debugf(FText::FromString(fContents), &header);

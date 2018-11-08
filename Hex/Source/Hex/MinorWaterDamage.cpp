@@ -3,7 +3,7 @@
 #include "MinorWaterDamage.h"
 
 AMinorWaterDamage::AMinorWaterDamage() : ASpell(Element::Water, SpellType::Damage, "Splash", 5, 15, 85, 2, 1) {
-	description = "Element: Fire, Damage: 5 - 15, Accuracy: 85%, Range: 2";
+	description = "Element: Water, Damage: 5 - 15, Accuracy: 85%, Range: 2";
 }
 
 SpellResult AMinorWaterDamage::cast() {
@@ -19,12 +19,6 @@ SpellResult AMinorWaterDamage::cast() {
 		std::get<0>(result) = 0;
 		break;
 	}
-
-	// Remove resource-based bonuses
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
 
 	return result;
 }

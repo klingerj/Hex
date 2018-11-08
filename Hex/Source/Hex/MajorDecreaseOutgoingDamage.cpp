@@ -20,12 +20,6 @@ SpellResult AMajorDecreaseOutgoingDamage::cast() {
 		break;
 	}
 
-	// Remove resource-based bonuses
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
-
 	return result;
 }
 

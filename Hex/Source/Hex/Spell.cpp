@@ -42,7 +42,6 @@ SpellResult ASpell::cast() {
 
 	return std::make_tuple(0, 0, 0, 0);
 	// Further implemented in subclasses
-	// TODO: Considering making resource-based spell boosts permanent? Delete lines in each spell's cast() to fix
 }
 
 std::string ASpell::elementToString() {

@@ -2,7 +2,7 @@
 
 #include "MajorIncreaseOutgoingDamage.h"
 
-AMajorIncreaseOutgoingDamage::AMajorIncreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Major Overcharge", 0, 0, 100, 1, 1) {
+AMajorIncreaseOutgoingDamage::AMajorIncreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Intensify", 0, 0, 100, 1, 1) {
 	description = "Element: Water, Outgoing Damage Boost: 25%, Accuracy: 100%, Range: 1";
 }
 
@@ -19,12 +19,6 @@ SpellResult AMajorIncreaseOutgoingDamage::cast() {
 		std::get<3>(result) = 0;
 		break;
 	}
-
-	// Remove resource-based bonuses
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
 
 	return result;
 }

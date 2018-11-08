@@ -2,7 +2,7 @@
 
 #include "MajorReduceIncomingDamage.h"
 
-AMajorReduceIncomingDamage::AMajorReduceIncomingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Strong Shield", 0, 0, 100, 1, 1) {
+AMajorReduceIncomingDamage::AMajorReduceIncomingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Aegis", 0, 0, 100, 1, 1) {
 	description = "Element: Water, Incoming Damage Reduction: 25%, Accuracy: 100%, Range: 1";
 }
 
@@ -19,12 +19,6 @@ SpellResult AMajorReduceIncomingDamage::cast() {
 		std::get<2>(result) = 0;
 		break;
 	}
-
-	// Remove resource-based bonuses
-	accuracy = originalAccuracy;
-	damageMin = originalMin;
-	damageMax = originalMax;
-	range = originalRange;
 
 	return result;
 }
