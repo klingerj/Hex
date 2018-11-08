@@ -9,7 +9,7 @@
 #include <string>
 
 // Sets default values
-AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlayer(nullptr), turnCounter(0)
+AGameManager::AGameManager() : playerOne(nullptr), playerTwo(nullptr), turnPlayer(nullptr), turnCounter(0), turnSwapped(false)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -139,6 +139,7 @@ void AGameManager::Tick(float DeltaTime)
 
 			turn = !turn;
 			turnCounter++;
+			turnSwapped = true;
 
 			turnPlayer = (turn) ? (playerTwo) : (playerOne);
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
