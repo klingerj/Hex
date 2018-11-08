@@ -7,7 +7,7 @@
 #include "EngineUtils.h"
 #include "Engine/World.h"
 
-AMinorCooldownIncrease::AMinorCooldownIncrease() : ASpell(Element::Earth, SpellType::Terrain, "Scald", 0, 0, 50, 2, 1) {
+AMinorCooldownIncrease::AMinorCooldownIncrease() : ASpell(Element::Earth, SpellType::Terrain, "Warm", 0, 0, 50, 2, 1) {
 	description = "Element: Earth, Increase the selected tile's cooldown by 1 turn, Accuracy: 50%, Range: 2";
 }
 

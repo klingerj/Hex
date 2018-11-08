@@ -79,7 +79,7 @@ void AWizard::spawnInvAndSpellbook() {
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(3) = nullptr;
+				spellArr.at(3) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f)); // TODO: Only for playtesting purposes
 				spellArr.at(4) = nullptr;
 				break;
 			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
@@ -100,20 +100,20 @@ void AWizard::spawnInvAndSpellbook() {
 				spellArr.at(4) = nullptr;
 				break;
 
-			// Scout: Minor Incoming Damage Decrease, Minor Fire Attack, ??? (speed boost or offensive terrain)
+			// Scout: Minor Incoming Damage Decrease, Minor Fire Attack, Minor Cooldown Increase
 			case WizardClass::Scout:
 				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(1) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(2) = World->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), spawn, FRotator(0.0f)); // TODO: Replace with terrain spell
+				spellArr.at(2) = World->SpawnActor<AMinorCooldownIncrease>(AMinorCooldownIncrease::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(3) = nullptr;
 				spellArr.at(4) = nullptr;
 				break;
 
-			// Tank: Minor Incoming Damage Decrease, Minor Earth Attack, ??? (defensive terrain)
+			// Tank: Minor Incoming Damage Decrease, Minor Earth Attack, Minor Cooldown Decrease
 			case WizardClass::Tank:
 				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(1) = World->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(2) = nullptr; // TODO: Replace with terrain spell
+				spellArr.at(2) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(3) = nullptr;
 				spellArr.at(4) = nullptr;
 				break;
@@ -351,6 +351,16 @@ void AWizard::hotkeyFive() {
 
 void AWizard::spellOne() {
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
+
+	// TODO: Uncomment this once a getElement() function is written for each tile; potentially add condition that tile can't be on cooldown to earn bonus
+	// Apply tile element bonus
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
 	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
 	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
 	if (std::get<0>(r) > 0) {
@@ -388,6 +398,14 @@ void AWizard::spellOne() {
 
 void AWizard::spellTwo() {
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
@@ -420,6 +438,14 @@ void AWizard::spellTwo() {
 
 void AWizard::spellThree() {
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
@@ -452,6 +478,14 @@ void AWizard::spellThree() {
 
 void AWizard::spellFour() {
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
@@ -484,6 +518,14 @@ void AWizard::spellFour() {
 
 void AWizard::spellFive() {
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;

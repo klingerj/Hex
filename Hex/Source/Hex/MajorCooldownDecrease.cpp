@@ -7,7 +7,7 @@
 #include "EngineUtils.h"
 #include "Engine/World.h"
 
-AMajorCooldownDecrease::AMajorCooldownDecrease() : ASpell(Element::Earth, SpellType::Terrain, "Frost", 0, 0, 50, 2, 1) {
+AMajorCooldownDecrease::AMajorCooldownDecrease() : ASpell(Element::Earth, SpellType::Terrain, "Soothe", 0, 0, 50, 2, 1) {
 	description = "Element: Earth, Decrease the selected tile's cooldown by up to 3 turns, Accuracy: 50%, Range: 2";
 }
 

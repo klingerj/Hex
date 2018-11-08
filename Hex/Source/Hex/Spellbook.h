@@ -22,6 +22,12 @@
 #include "MinorDecreaseOutgoingDamage.h"
 #include "MinorIncreaseOutgoingDamage.h"
 
+
+#include "MajorCooldownDecrease.h"
+#include "MajorCooldownIncrease.h"
+#include "MinorCooldownDecrease.h"
+#include "MinorCooldownIncrease.h"
+
 #include "MajorReduceIncomingDamage.h"
 #include "MinorReduceIncomingDamage.h"
 
