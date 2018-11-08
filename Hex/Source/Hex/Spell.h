@@ -66,6 +66,7 @@ public:
 
 	/// SPELL FUNCTIONS
 	virtual SpellResult cast();
+	virtual int getSpellID();
 
 	/// UTILITY FUNCTIONS
 	std::string elementToString();

@@ -22,3 +22,7 @@ SpellResult AMinorFireDamage::cast() {
 
 	return result;
 }
+
+int AMinorFireDamage::getSpellID() {
+	return 0;
+}

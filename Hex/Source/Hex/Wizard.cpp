@@ -74,7 +74,7 @@ void AWizard::spawnInvAndSpellbook() {
 		// Fill spellbook with appropriate starting spells
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
-			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
+			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Water Attack
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
 				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));

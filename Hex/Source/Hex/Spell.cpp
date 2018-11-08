@@ -65,3 +65,7 @@ std::string ASpell::elementToString() {
 
 	return "";
 }
+
+int ASpell::getSpellID() {
+	return -1;
+}

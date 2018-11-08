@@ -23,4 +23,6 @@ SpellResult AMinorWaterDamage::cast() {
 	return result;
 }
 
-
+int AMinorWaterDamage::getSpellID() {
+	return 1;
+}
