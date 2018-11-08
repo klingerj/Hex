@@ -22,7 +22,7 @@ outgoingDamageBuff(0), incomingDamageBuff(0), outgoingAccuracyBuff(0)
 	// Set stats according to character class (can obviously change these as we develop combat)
 	switch (className) {
 		case WizardClass::AllAround:
-			maxHealth = 200;
+			maxHealth = 100; //TODO tweak this
 			originalSpeed = 2;
 			break;
   
@@ -76,10 +76,10 @@ void AWizard::spawnInvAndSpellbook() {
 		switch (charClass) {
 			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
 			case WizardClass::AllAround:
-				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
-				spellArr.at(3) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f)); // TODO: Only for playtesting purposes
+				/*spellArr.at(0) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f)));
+				/*spellArr.at(1) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f)));
+				/*spellArr.at(2) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f)));
+				/*spellArr.at(3) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f))); // TODO: Only for playtesting purposes
 				spellArr.at(4) = nullptr;
 				break;
 			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
@@ -337,49 +337,111 @@ void AWizard::hotkeyOne() {
 }
 
 void AWizard::hotkeyTwo() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-  UE_LOG(LogClass, Log, TEXT("Selected Spell 2"));
-  hasCast = true;
-  selectedSpell = 1;
-	//int dmg = spellbook->readiedSpells.at(1)->cast();
-  //other->health -= dmg;
+    if (this != gm->turnPlayer) {
+        other->hotkeyTwo();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 2, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 2, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 2, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+    UE_LOG(LogClass, Log, TEXT("Selected Spell 2"));
+    hasCast = true;
+    currentStage = AGameManager::TurnStage::SpellSelected;
+    gm->RecomputeDjikstra();
+    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+    // TODO: Incorporate range into whether or not a spell can be cast
+    selectedSpell = 1;
+    //int dmg = spellbook->readiedSpells.at(0)->cast();
+    //other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-  UE_LOG(LogClass, Log, TEXT("Selected Spell 3"));
-  hasCast = true;
-
-  selectedSpell = 2;
-	//int dmg = spellbook->readiedSpells.at(2)->cast();
-	//other->health -= dmg;
+    if (this != gm->turnPlayer) {
+        other->hotkeyThree();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 3, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 3, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 3, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+    UE_LOG(LogClass, Log, TEXT("Selected Spell 3"));
+    hasCast = true;
+    currentStage = AGameManager::TurnStage::SpellSelected;
+    gm->RecomputeDjikstra();
+    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+    // TODO: Incorporate range into whether or not a spell can be cast
+    selectedSpell = 2;
+    //int dmg = spellbook->readiedSpells.at(0)->cast();
+    //other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-
-  hasCast = true;
-  UE_LOG(LogClass, Log, TEXT("Selected Spell 4"));
-  selectedSpell = 3;
-	//int dmg = spellbook->readiedSpells.at(3)->cast();
-	//other->health -= dmg;
+    if (this != gm->turnPlayer) {
+        other->hotkeyFour();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 4, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 4, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 4, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+    UE_LOG(LogClass, Log, TEXT("Selected Spell 4"));
+    hasCast = true;
+    currentStage = AGameManager::TurnStage::SpellSelected;
+    gm->RecomputeDjikstra();
+    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+    // TODO: Incorporate range into whether or not a spell can be cast
+    selectedSpell = 3;
+    //int dmg = spellbook->readiedSpells.at(0)->cast();
+    //other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-  UE_LOG(LogClass, Log, TEXT("Selected Spell 5"));
-  hasCast = true;
-  selectedSpell = 4;
-	//int dmg = spellbook->readiedSpells.at(4)->cast();
-	//other->health -= dmg;
+    if (this != gm->turnPlayer) {
+        other->hotkeyFive();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 5, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 5, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 5, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+    UE_LOG(LogClass, Log, TEXT("Selected Spell 5"));
+    hasCast = true;
+    currentStage = AGameManager::TurnStage::SpellSelected;
+    gm->RecomputeDjikstra();
+    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+    // TODO: Incorporate range into whether or not a spell can be cast
+    selectedSpell = 4;
+    //int dmg = spellbook->readiedSpells.at(0)->cast();
+    //other->health -= dmg;
 }
 
 void AWizard::spellOne() {
@@ -431,6 +493,7 @@ void AWizard::spellOne() {
 }
 
 void AWizard::spellTwo() {
+    UE_LOG(LogClass, Log, TEXT("Casted spell 2"));
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
 
 	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
@@ -471,6 +534,7 @@ void AWizard::spellTwo() {
 }
 
 void AWizard::spellThree() {
+    UE_LOG(LogClass, Log, TEXT("Casted spell 3"));
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
 
 	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
@@ -511,6 +575,7 @@ void AWizard::spellThree() {
 }
 
 void AWizard::spellFour() {
+    UE_LOG(LogClass, Log, TEXT("Casted spell 4"));
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
 
 	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
@@ -551,6 +616,7 @@ void AWizard::spellFour() {
 }
 
 void AWizard::spellFive() {
+    UE_LOG(LogClass, Log, TEXT("Casted spell 5"));
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
 
 	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
