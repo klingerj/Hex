@@ -18,7 +18,7 @@ public:
 	AMinorAccuracyIncrease();
 
 public:
-	const int boost = 5;
+	const int boost = 1;
 
   const static int id = 0;
 

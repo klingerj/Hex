@@ -18,7 +18,7 @@ public:
 	AMajorDamageBoost();
 
 public:
-	const int boost = 30;
+	const int boost = 3;
 
   const static int id = 3;
 

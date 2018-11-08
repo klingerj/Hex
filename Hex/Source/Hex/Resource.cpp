@@ -26,7 +26,7 @@ void AResource::Tick(float DeltaTime)
 }
 
 int AResource::applyEffect(ASpell& s) const {
-	// If we're using an AOE or Damage resource, we need to make sure the spell we're modifying is appropriate
+	// If we're using a Damage resource, we need to make sure the spell we're modifying is appropriate
 	switch (affectedStat) {
 		case EffectType::Damage:
 			if (s.type != ASpell::SpellType::Damage) {

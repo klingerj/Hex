@@ -72,28 +72,50 @@ void AWizard::spawnInvAndSpellbook() {
 		UE_LOG(LogClass, Log, TEXT("Tried to spawn a spellbook"));
 		
 		// Fill spellbook with appropriate starting spells
-		// TODO: Finish filling in after more spells are created
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
-			// All-Around: Minor Fire Attack, ???, ???
+			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
 			case WizardClass::AllAround:
 				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f)); // TODO: Only for playtesting purposes
+				spellArr.at(4) = nullptr;
 				break;
-			// Buff/Debuff: ???, ???, ???
+			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
 			case WizardClass::BuffDebuff:
+				spellArr.at(0) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorDecreaseOutgoingDamage>(AMinorDecreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
-			// Glass Cannon: Minor Electric Attack, ???, ???
+			// Glass Cannon: Minor Electric Attack, Minor Outgoing Damage Boost, Minor Outgoing Accuracy Boost
 			case WizardClass::GlassCannon:
 				spellArr.at(0) = World->SpawnActor<AMinorElectricDamage>(AMinorElectricDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingAccuracy>(AMinorIncreaseOutgoingAccuracy::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
-			// Scout: ???, ???, ???
+			// Scout: Minor Incoming Damage Decrease, Minor Fire Attack, Minor Cooldown Increase
 			case WizardClass::Scout:
+				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorCooldownIncrease>(AMinorCooldownIncrease::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 
-			// Tank: ???, ???, ???
+			// Tank: Minor Incoming Damage Decrease, Minor Earth Attack, Minor Cooldown Decrease
 			case WizardClass::Tank:
+				spellArr.at(0) = World->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = nullptr;
+				spellArr.at(4) = nullptr;
 				break;
 		}
 	}
@@ -242,38 +264,33 @@ void AWizard::ToggleControlDisplay() {
         other->ToggleControlDisplay();
     }
 }
-
-// TODO: @Spencer, this is currently bugged in that it attempts to access a protected memory address (and it's also basic/boring). 
-//		Can you make a clickable inventory UI and have this function bring it up? Right now, this function is bound to the B key.
+ 
 void AWizard::showInventory() {
     FText header = FText::FromString("INVENTORY");
     std::string contents = "";
 
-    for (int i = 0; i < inventory->inventory.size(); ++i) {
-        int quant = inventory->inventory.at(i);
-        switch (i) {
-        case 0:
-            contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
-            break;
-        case 1:
-            contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
-            break;
-        case 2:
-            contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
-            break;
-        case 3:
-            contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
-            break;
-        }
-    }
+    //for (int i = 0; i < inventory->inventory.size(); ++i) {
+    //    int quant = inventory->inventory.at(i);
+    //    switch (i) {
+    //    case 0:
+    //        contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
+    //        break;
+    //    case 1:
+    //        contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
+    //        break;
+    //    case 2:
+    //        contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
+    //        break;
+    //    case 3:
+    //        contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
+    //        break;
+    //    }
+    //}
 
     FString fContents = contents.c_str();
     FMessageDialog::Debugf(FText::FromString(fContents), &header);
 }
 
-// TODO: @Spencer, this is probably also bugged like the inventory function, but I haven't tested it. 
-//		Can you make a spell bar UI that sits at the bottom of the screen (similar to the one in League) and shows icons (if it's not too hard)
-//		of what spells are ready and which key (1-5) they're bound to?
 void AWizard::showSpellbook() {
 	FText header = FText::FromString("SPELLBOOK");
 	std::string contents = "";
@@ -365,44 +382,210 @@ void AWizard::hotkeyFive() {
 	//other->health -= dmg;
 }
 
-// TODO: @Joe, did you want these done specifically as 5 separate functions? If not, we should probably condense them into one function that takes an argument since they all do the same thing
 void AWizard::spellOne() {
   UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	// TODO: Uncomment this once a getElement() function is written for each tile; potentially add condition that tile can't be on cooldown to earn bonus
+	// Apply tile element bonus
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
+	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		// Apply buffs/debuffs; note that only one can be applied at a time
+		// Outgoing accuracy buff/debuff
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		
+		// Incoming damage buff/debuff
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+		
+		// Outgoing damage buff/debuff
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellTwo() {
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellThree() {
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellFour() {
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }
 
 void AWizard::spellFive() {
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
-	other->health -= std::get<0>(r);
-	this->outgoingAccuracyBuff = std::get<1>(r);
-	this->incomingDamageBuff = std::get<2>(r);
-	this->outgoingDamageBuff = std::get<3>(r);
+
+	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
+	//	std::get<0>(r) *= 1.2;
+	//	std::get<1>(r) *= 1.2;
+	//	std::get<2>(r) *= 1.2;
+	//	std::get<3>(r) *= 1.2;
+	//}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	if (std::get<0>(r) > 0) {
+		this->outgoingAccuracyBuff = 0;
+		this->outgoingDamageBuff = 0;
+		other->incomingDamageBuff = 0;
+	}
+	else {
+		if (std::get<1>(r) < 0) {
+			other->outgoingAccuracyBuff = std::get<1>(r);
+		}
+		else {
+			this->outgoingAccuracyBuff = std::get<1>(r);
+		}
+
+		if (std::get<2>(r) < 0) {
+			this->incomingDamageBuff = std::get<2>(r);
+		}
+		else {
+			other->incomingDamageBuff = std::get<2>(r);
+		}
+
+		if (std::get<3>(r) < 0) {
+			other->outgoingDamageBuff = std::get<3>(r);
+		}
+		else {
+			this->outgoingDamageBuff = std::get<3>(r);
+		}
+	}
 }

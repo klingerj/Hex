@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MinorElectricDamage.h"
+#include "MinorEarthDamage.h"
 
-AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Shock", 20, 30, 55, 2, 1) {
-    description = "Element: Electricity, Damage: 20 - 30, Accuracy: 55%, Range: 2";
+AMinorEarthDamage::AMinorEarthDamage() : ASpell(Element::Earth, SpellType::Damage, "Mudball", 10, 15, 80, 2, 1) {
+	description = "Element: Earth, Damage: 10 - 15, Accuracy: 80%, Range: 2";
 }
 
 // Returns the amount of damage done to the opponent
-SpellResult AMinorElectricDamage::cast() {
+SpellResult AMinorEarthDamage::cast() {
 	SpellResult result(0, 0, 0, 0);
 	switch (std::get<0>(ASpell::cast())) {
 	case 0:
