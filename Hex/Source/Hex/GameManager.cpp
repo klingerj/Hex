@@ -101,10 +101,13 @@ void AGameManager::Tick(float DeltaTime)
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
 		case TurnStage::ApplyEffects:
-      turnPlayer->currentTile->hexGridTileEffect->ResetCooldown(); // pretend we collected a resource
-			turnPlayer->currentStage = TurnStage::Listening;
-			break;
-
+    {
+        if (!turnPlayer->currentTile->hexGridTileEffect->IsOnCooldown()) { // if the tile is not on cooldown
+            turnPlayer->currentTile->hexGridTileEffect->ResetCooldown(); // pretend we collected a resource
+        }
+        turnPlayer->currentStage = TurnStage::Listening;
+        break;
+    }
 		case TurnStage::Cast:
 			//UE_LOG(LogClass, Log, TEXT("Player %d cast a spell"), int(turn) + 1);
 			//turnPlayer->currentStage = TurnStage::Listening;
@@ -116,7 +119,7 @@ void AGameManager::Tick(float DeltaTime)
 			break;
 
 		case TurnStage::Move:
-		  //UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+		  UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
 			break;
     
     case TurnStage::MoveEnd:
@@ -139,6 +142,20 @@ void AGameManager::Tick(float DeltaTime)
 			}
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
+      // Advance the cooldown for all tiles
+        UE_LOG(LogClass, Log, TEXT("Advancing Cooldowns!"));
+
+        for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+            AHexGridTile* currentTile = *actorIter;
+            if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                UE_LOG(LogClass, Log, TEXT("About to advance cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+            }
+            currentTile->hexGridTileEffect->AdvanceCooldown();
+            if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                UE_LOG(LogClass, Log, TEXT("Advanced cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+            }
+        }
+
 			turn = !turn;
 			turnCounter++;
 
@@ -146,24 +163,12 @@ void AGameManager::Tick(float DeltaTime)
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
 			RecomputeDjikstra();
-
-      // Advance the cooldown for all tiles
-      UE_LOG(LogClass, Log, TEXT("Advancing Cooldowns!"));
-      for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
-          AHexGridTile* currentTile = *actorIter;
-          if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
-              UE_LOG(LogClass, Log, TEXT("About to advance cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
-          }
-          currentTile->hexGridTileEffect->AdvanceCooldown();
-          if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
-              UE_LOG(LogClass, Log, TEXT("Advanced cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
-          }
-      }
+      UE_LOG(LogClass, Log, TEXT("Tryna move to apply effects stage. Turn is: %d"), turn);
 			turnPlayer->currentStage = TurnStage::ApplyEffects;
 			break;
 
 		case TurnStage::Listening:
-			//UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
+			UE_LOG(LogClass, Log, TEXT("Listening for input from Player %d"), int(turn) + 1);
 			break;
 	}
 }

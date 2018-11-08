@@ -39,7 +39,10 @@ public:
 	void castSpell();
 	void craftSpell();
 	void move();
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
 	void endTurn();
+
 	// Hotkey spells
 	void hotkeyOne();
 	void hotkeyTwo();
