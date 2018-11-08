@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HexGridTileEffect.h"
+#include "Resource.h"
 #include "MinorDamageBoost.h"
 #include "MajorDamageBoost.h"
 #include "MajorAccuracyIncrease.h"
@@ -44,6 +45,9 @@ bool UHexGridTileEffect::IsOnCooldown() const {
 
 void UHexGridTileEffect::AdvanceCooldown() {
     remainingCooldownTurns = remainingCooldownTurns == 0 ? 0 : remainingCooldownTurns - 1;
+    if (remainingCooldownTurns > 0) {
+        UE_LOG(LogClass, Log, TEXT("Remaining Turns: %d"), remainingCooldownTurns);
+    }
 }
 
 TileYield UHexGridTileEffect::Yield() {
@@ -118,4 +122,10 @@ void UHexGridTileEffect::SetResource() {
         }
         break;
     }
+    resource->hexGridTileEffect = this;
+    UE_LOG(LogClass, Log, TEXT("set tile effect ptr for resource"));
+}
+
+AResource* UHexGridTileEffect::GetResource() const {
+    return resource;
 }

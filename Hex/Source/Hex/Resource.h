@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "Resource.generated.h"
 
+class UHexGridTileEffect;
+
 UCLASS()
 class HEX_API AResource : public AActor
 {
@@ -42,7 +44,12 @@ public:
   int GetRarity() const;
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
-  void SetRarity(int r);
+  void SetRarity();
+
+  UHexGridTileEffect* hexGridTileEffect;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  int GetType() const;
 
 	// Total number of unique resources is at least (num of EffectTypes) * (num of Rarities)
 

@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "Resource.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "HexGridTileEffect.generated.h"
+
+class AResource;
 
 enum TileElementType  { Element_Fire, Element_Water, Element_Earth, Element_Air };
 enum TileFunctionType { Function_ResourceYield, Function_PassiveEffect };
@@ -43,18 +44,33 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
   int type;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
   int rarity;
 
   // Cooldown logic
-  uint32 maxCooldownTurns;
-  uint32 remainingCooldownTurns;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+  int maxCooldownTurns;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+  int remainingCooldownTurns;
+
+  UFUNCTION(BlueprintCallable, Category = "Cooldown")
   void ResetCooldown();
+
+  UFUNCTION(BlueprintCallable, Category = "Cooldown")
   bool IsOnCooldown() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
   void AdvanceCooldown();
+
   AResource* resource;
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   void SetResource();
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  AResource* GetResource() const;
 
   // Usage (by some global class)
   /*
