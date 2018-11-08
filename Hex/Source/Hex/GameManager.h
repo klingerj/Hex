@@ -13,7 +13,7 @@ class HEX_API AGameManager : public AActor
 
 public:
 	// Sets default values for this actor's properties
-	AGameManager();
+    AGameManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +32,9 @@ public:
 
   int turnCounter;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+  bool turnSwapped;
+
   UFUNCTION(BlueprintCallable, Category = "Game State")
   int GetTurnCounter() const;
 
@@ -42,7 +45,7 @@ public:
   AWizard* GetTurnPlayer() const;
 
 	bool turn;
-	enum TurnStage { ApplyEffects = 0, Cast = 1, Craft = 2, Move = 3, End = 4, Listening = 5, MoveEnd = 6 };
+	enum TurnStage { ApplyEffects = 0, Cast = 1, Craft = 2, Move = 3, End = 4, Listening = 5, MoveEnd = 6, SpellSelected = 7 };
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   void Setup();
@@ -55,6 +58,18 @@ public:
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   void SetTurnPlayerTile(AHexGridTile* targetMoveTile);
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
+  void SetStage(int32 s);
+
+  UFUNCTION(BlueprintCallable, Category = "Player State")
+  ASpell* GetCurrentlySelectedSpell() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Player State")
+  int GetCurrentlySelectedSpellIndex() const;
+
+  UFUNCTION(BlueprintCallable, Category = "Player State")
+  void CastSpell(int i);
 
   void RecomputeDjikstra();
 };

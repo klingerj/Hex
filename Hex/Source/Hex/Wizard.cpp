@@ -310,27 +310,53 @@ bool AWizard::GetDisplayControls() {
 
 /// SPELL HOTKEY FUNCTIONS
 void AWizard::hotkeyOne() {
-	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
-		return;
-	}
-
-	hasCast = true;
+    if (this != gm->turnPlayer) {
+        other->hotkeyOne();
+    }
+    if (hasCast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, already cast tho"));
+        return;
+    }
+    if (hasCrafted) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, already crafted tho"));
+        return;
+    }
+    if (currentStage != AGameManager::TurnStage::Cast) {
+        UE_LOG(LogClass, Log, TEXT("Spell 1, it isnt cast stage tho, actual stage is: %d"), currentStage);
+        return;
+    }
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 1"));
+  hasCast = true;
+  currentStage = AGameManager::TurnStage::SpellSelected;
+  gm->RecomputeDjikstra();
+  // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
+  // TODO: Incorporate range into whether or not a spell can be cast
+  selectedSpell = 0;
+	//int dmg = spellbook->readiedSpells.at(0)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyTwo() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
-
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 2"));
   hasCast = true;
+  selectedSpell = 1;
+	//int dmg = spellbook->readiedSpells.at(1)->cast();
+  //other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 3"));
+  hasCast = true;
 
-	hasCast = true;
+  selectedSpell = 2;
+	//int dmg = spellbook->readiedSpells.at(2)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
@@ -338,18 +364,26 @@ void AWizard::hotkeyFour() {
 		return;
 	}
 
-	hasCast = true;
+  hasCast = true;
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 4"));
+  selectedSpell = 3;
+	//int dmg = spellbook->readiedSpells.at(3)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
 	if (hasCast || hasCrafted || currentStage != AGameManager::TurnStage::Cast) {
 		return;
 	}
-
-	hasCast = true;
+  UE_LOG(LogClass, Log, TEXT("Selected Spell 5"));
+  hasCast = true;
+  selectedSpell = 4;
+	//int dmg = spellbook->readiedSpells.at(4)->cast();
+	//other->health -= dmg;
 }
 
 void AWizard::spellOne() {
+  UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
 
 	// TODO: Uncomment this once a getElement() function is written for each tile; potentially add condition that tile can't be on cooldown to earn bonus
@@ -518,40 +552,8 @@ void AWizard::spellFour() {
 
 void AWizard::spellFive() {
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
-
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
-
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	if (std::get<0>(r) > 0) {
-		this->outgoingAccuracyBuff = 0;
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
-		}
-
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
-		}
-		else {
-			other->incomingDamageBuff = std::get<2>(r);
-		}
-
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
-		}
-	}
+	other->health -= std::get<0>(r);
+	this->outgoingAccuracyBuff = std::get<1>(r);
+	this->incomingDamageBuff = std::get<2>(r);
+	this->outgoingDamageBuff = std::get<3>(r);
 }

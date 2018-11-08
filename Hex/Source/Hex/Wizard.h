@@ -39,7 +39,10 @@ public:
 	void castSpell();
 	void craftSpell();
 	void move();
+
+  UFUNCTION(BlueprintCallable, Category = "Game State")
 	void endTurn();
+
 	// Hotkey spells
 	void hotkeyOne();
 	void hotkeyTwo();
@@ -83,7 +86,9 @@ public:
 
 	// Maintain a list of spells the player is able to cast
 	ASpellbook* spellbook;
-	void showSpellbook();
+	TSubclassOf<class ASpellbook> SBookClass;
+  void showSpellbook();
+  int selectedSpell;
 
 	AWizard* other;
 	AGameManager* gm;

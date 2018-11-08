@@ -37,7 +37,7 @@ uint32 Index2DTo1D(uint32 x, uint32 y, uint32 dim) {
 
 void AHexGridGraphManager::PopulateAdjacencyMatrix() {
     // todo: need to get dimension of the grid
-    uint32 dim = 11;
+    uint32 dim = 4;
 
     adjacencyMatrix = new int[dim*dim*dim*dim];
     for (uint32 i = 0; i < dim*dim*dim*dim; ++i) {
@@ -139,7 +139,7 @@ void AHexGridGraphManager::PopulateAdjacencyMatrix() {
 }
 
 void AHexGridGraphManager::DjikstraLoop() {
-    constexpr uint32 dim = 11;
+    constexpr uint32 dim = 4;
 
     std::vector<AHexGridTile*> gridTiles;
     AHexGridTile* gridPtrs[dim*dim];
@@ -180,7 +180,7 @@ void AHexGridGraphManager::DjikstraLoop() {
 }
 
 void AHexGridGraphManager::Djikstra(int* vertices, AHexGridTile* tiles[]) {
-    constexpr uint32 dim = 11;
+    constexpr uint32 dim = 4;
     int minValue = 500; // high number
     int minNode = 0;
     int oldMinNode = -1;
