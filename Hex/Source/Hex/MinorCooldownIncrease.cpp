@@ -25,7 +25,7 @@ SpellResult AMinorCooldownIncrease::cast() {
 		break;
 	}
 	}
-
+	cooldownTurnsRemaining = 2;
 	return result;
 }
 

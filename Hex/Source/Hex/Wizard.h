@@ -39,6 +39,7 @@ public:
 	void castSpell();
 	void craftSpell();
 	void move();
+	void startGame();
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
 	void endTurn();
@@ -78,7 +79,7 @@ public:
 	// Max stats
 	int maxHealth, originalSpeed;
 	// Track if certain actions have been taken and what stage of the turn we're in
-	bool hasCast, hasCrafted, hasMoved;
+	bool hasCast, hasCrafted, hasMoved, gameNotStarted;
 	AGameManager::TurnStage currentStage;
 	// Maintain an inventory of collected resources
 	AInventory* inventory;

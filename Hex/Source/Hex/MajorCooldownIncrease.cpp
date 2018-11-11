@@ -23,7 +23,7 @@ SpellResult AMajorCooldownIncrease::cast() {
 		break;
 	}
 	}
-
+	cooldownTurnsRemaining = 4;
 	return result;
 }
 

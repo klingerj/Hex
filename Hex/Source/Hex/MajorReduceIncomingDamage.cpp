@@ -19,7 +19,7 @@ SpellResult AMajorReduceIncomingDamage::cast() {
 		std::get<2>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 4;
 	return result;
 }
 

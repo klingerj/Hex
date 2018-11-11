@@ -19,7 +19,7 @@ SpellResult AMajorIncreaseOutgoingAccuracy::cast() {
 		std::get<1>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 4;
 	return result;
 }
 

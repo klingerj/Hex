@@ -10,7 +10,7 @@ ASpell::ASpell() : ASpell(Element::Water, SpellType::Damage, "Default", 0, 0, 0,
 
 ASpell::ASpell(Element e, SpellType t, std::string name, int baseDamageMin, int baseDamageMax, int baseAcc, int baseRange, int baseAOE) : 
 	id(currId++), element(e), type(t), name(name), originalMin(baseDamageMin), originalMax(baseDamageMax), originalAccuracy(baseAcc), originalRange(baseRange),
-	damageMin(baseDamageMin), damageMax(baseDamageMax), accuracy(baseAcc), range(baseRange), areaOfEffect(baseAOE)
+	damageMin(baseDamageMin), damageMax(baseDamageMax), accuracy(baseAcc), range(baseRange), areaOfEffect(baseAOE), cooldownTurnsRemaining(0)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -35,7 +35,7 @@ void ASpell::Tick(float DeltaTime)
 SpellResult ASpell::cast() {
 	int randCast = rand() % 100; // 0 to 99
 	if (randCast >= accuracy) {
-		// You failed to cast the spell!
+		// Failed to cast the spell
 		FMessageDialog::Debugf(FText::FromString("Failed to cast spell!"));
 		return std::make_tuple(1, 1, 1, 1);
 	}

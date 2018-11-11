@@ -19,7 +19,7 @@ SpellResult AMinorReduceIncomingDamage::cast() {
 		std::get<2>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 2;
 	return result;
 }
 
