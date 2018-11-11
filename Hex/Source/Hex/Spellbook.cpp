@@ -34,6 +34,7 @@ void ASpellbook::Tick(float DeltaTime)
 void ASpellbook::addCraftedSpell(ASpell* s) {
 	if (numSlotsFilled < capacity) {
 		readiedSpells.at(numSlotsFilled) = s;
+    UE_LOG(LogClass, Log, TEXT("Add spell to spellbook at index: %d"), numSlotsFilled);
 		numSlotsFilled++;
 	}
 	else {

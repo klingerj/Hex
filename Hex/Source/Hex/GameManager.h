@@ -71,5 +71,8 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Player State")
   void CastSpell(int i);
 
+  UFUNCTION(BlueprintCallable, Category = "Player State")
+  void AddSpellIDToSpellbook(int id);
+
   void RecomputeDjikstra();
 };
