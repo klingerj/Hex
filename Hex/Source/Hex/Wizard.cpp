@@ -7,7 +7,7 @@
 AWizard::AWizard() : AWizard(WizardClass::AllAround) {}
 
 // Sets default values
-AWizard::AWizard(WizardClass className) : hasCast(false), hasCrafted(false), hasMoved(false), currentStage(AGameManager::ApplyEffects), other(nullptr), displayControls(false), charClass(className),
+AWizard::AWizard(WizardClass className) : hasCast(false), hasCrafted(false), hasMoved(false), gameNotStarted(true), currentStage(AGameManager::StartGame), other(nullptr), displayControls(false), charClass(className),
 outgoingDamageBuff(0), incomingDamageBuff(0), outgoingAccuracyBuff(0)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -22,7 +22,7 @@ outgoingDamageBuff(0), incomingDamageBuff(0), outgoingAccuracyBuff(0)
 	// Set stats according to character class (can obviously change these as we develop combat)
 	switch (className) {
 		case WizardClass::AllAround:
-			maxHealth = 100; //TODO tweak this
+			maxHealth = 100; //TODO: Tweak this
 			originalSpeed = 2;
 			break;
   
@@ -74,12 +74,12 @@ void AWizard::spawnInvAndSpellbook() {
 		// Fill spellbook with appropriate starting spells
 		std::array<ASpell*, 5>& spellArr = spellbook->readiedSpells;
 		switch (charClass) {
-			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Reduction
+			// All-Around: Minor Fire Attack, Minor Outgoing Damage Boost, Minor Water Attack
 			case WizardClass::AllAround:
-				/*spellArr.at(0) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f)));
-				/*spellArr.at(1) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f)));
-				/*spellArr.at(2) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f)));
-				/*spellArr.at(3) =*/ //spellbook->addCraftedSpell(World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f))); // TODO: Only for playtesting purposes
+				spellArr.at(0) = World->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(1) = World->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(2) = World->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), spawn, FRotator(0.0f));
+				spellArr.at(3) = World->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), spawn, FRotator(0.0f)); // TODO: Only for playtesting purposes
 				spellArr.at(4) = nullptr;
 				break;
 			// Buff/Debuff: Minor Water Attack, Minor Outgoing Damage Boost, Minor Outgoing Damage Decrease
@@ -138,6 +138,7 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Craft", EInputEvent::IE_Pressed, this, &AWizard::craftSpell);
 	PlayerInputComponent->BindAction("Move", EInputEvent::IE_Pressed, this, &AWizard::move);
 	PlayerInputComponent->BindAction("EndTurn", EInputEvent::IE_Pressed, this, &AWizard::endTurn);
+	PlayerInputComponent->BindAction("StartGame", EInputEvent::IE_Pressed, this, &AWizard::startGame);
 
 	// Spellcasting hotkeys
 	PlayerInputComponent->BindAction("Spell1", EInputEvent::IE_Pressed, this, &AWizard::hotkeyOne);
@@ -155,7 +156,7 @@ void AWizard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 /// GAMEPLAY FUNCTIONS
 void AWizard::applyTileEffects() {
 	// Only apply effects of the tile you start on
-	if (hasMoved) {
+	if (hasMoved || gameNotStarted) {
 		return;
 	}
 
@@ -187,7 +188,7 @@ void AWizard::castSpell() {
 
 	// Can't cast if you craft; can only cast once per turn
 
-	if (hasCrafted || hasCast) {
+	if (hasCrafted || hasCast || gameNotStarted) {
 		return;
 	}
 
@@ -205,14 +206,13 @@ void AWizard::craftSpell() {
 		return;
 	}
 	// Can't craft if you casted; can only craft once per turn
-	if (hasCast || hasCrafted) {
+	if (hasCast || hasCrafted || gameNotStarted) {
 		return;
 	}
 
 	UE_LOG(LogClass, Log, TEXT("CRAFT"));
 
 	// Craft something
-	// TODO: spellbook->modifyExistingSpell(inventory, selectedResource, selectedSpell); need to prompt for selectedResource and selectedSpell
 
 	hasCrafted = true;
 	currentStage = AGameManager::TurnStage::Craft;
@@ -224,7 +224,7 @@ void AWizard::move() {
 		return;
 	}
 	// Can only move once per turn
-	if (hasMoved) {
+	if (hasMoved || gameNotStarted) {
 		return;
 	}
 
@@ -251,6 +251,24 @@ void AWizard::endTurn() {
 	currentStage = AGameManager::TurnStage::End;
 }
 
+void AWizard::startGame() {
+	if (this != gm->turnPlayer) {
+		gm->turnPlayer->startGame();
+		return;
+	}
+
+	// Game will only be paused to begin with; this ensures the function does nothing after its first call
+	if (currentStage != AGameManager::TurnStage::StartGame || !gameNotStarted) {
+		return;
+	}
+
+	gameNotStarted = false;
+	other->gameNotStarted = false;
+
+	currentStage = AGameManager::TurnStage::ApplyEffects;
+	other->currentStage = AGameManager::TurnStage::ApplyEffects;
+}
+
 int AWizard::GetHealth() const {
     return health;
 }
@@ -268,24 +286,6 @@ void AWizard::ToggleControlDisplay() {
 void AWizard::showInventory() {
     FText header = FText::FromString("INVENTORY");
     std::string contents = "";
-
-    //for (int i = 0; i < inventory->inventory.size(); ++i) {
-    //    int quant = inventory->inventory.at(i);
-    //    switch (i) {
-    //    case 0:
-    //        contents += "Minor Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 5%" + "\n\n";
-    //        break;
-    //    case 1:
-    //        contents += "Major Accuracy Increase x " + std::to_string(quant) + "\n\t" + "Increase next spell's accuracy by 15%" + "\n\n";
-    //        break;
-    //    case 2:
-    //        contents += "Minor Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 10" + "\n\n";
-    //        break;
-    //    case 3:
-    //        contents += "Major Damage Boost x " + std::to_string(quant) + "\n\t" + "Increase next spell's damage by 30" + "\n\n";
-    //        break;
-    //    }
-    //}
 
     FString fContents = contents.c_str();
     FMessageDialog::Debugf(FText::FromString(fContents), &header);
@@ -312,6 +312,7 @@ bool AWizard::GetDisplayControls() {
 void AWizard::hotkeyOne() {
     if (this != gm->turnPlayer) {
         other->hotkeyOne();
+		return;
     }
     if (hasCast) {
         UE_LOG(LogClass, Log, TEXT("Spell 1, already cast tho"));
@@ -326,19 +327,29 @@ void AWizard::hotkeyOne() {
         return;
     }
   UE_LOG(LogClass, Log, TEXT("Selected Spell 1"));
+
+  // Incorporate spell cooldown
+  if (spellbook->readiedSpells.at(0)->cooldownTurnsRemaining > 0) {
+	  UE_LOG(LogClass, Log, TEXT("Spell 1, on cooldown tho"));
+	  FText header = FText::FromString("COOLDOWN");
+	  std::string content = "This spell is on cooldown for " + std::to_string(spellbook->readiedSpells.at(0)->cooldownTurnsRemaining) + " more turns!";
+	  FString fContent = content.c_str();
+	  FMessageDialog::Debugf(FText::FromString(fContent), &header);
+	  return;
+  }
+  
   hasCast = true;
+
   currentStage = AGameManager::TurnStage::SpellSelected;
   gm->RecomputeDjikstra();
-  // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
   // TODO: Incorporate range into whether or not a spell can be cast
   selectedSpell = 0;
-	//int dmg = spellbook->readiedSpells.at(0)->cast();
-	//other->health -= dmg;
 }
 
 void AWizard::hotkeyTwo() {
     if (this != gm->turnPlayer) {
         other->hotkeyTwo();
+		return;
     }
     if (hasCast) {
         UE_LOG(LogClass, Log, TEXT("Spell 2, already cast tho"));
@@ -353,19 +364,27 @@ void AWizard::hotkeyTwo() {
         return;
     }
     UE_LOG(LogClass, Log, TEXT("Selected Spell 2"));
+
+	if (spellbook->readiedSpells.at(1)->cooldownTurnsRemaining > 0) {
+		UE_LOG(LogClass, Log, TEXT("Spell 2, on cooldown tho"));
+		FText header = FText::FromString("COOLDOWN");
+		std::string content = "This spell is on cooldown for " + std::to_string(spellbook->readiedSpells.at(1)->cooldownTurnsRemaining) + " more turns!";
+		FString fContent = content.c_str();
+		FMessageDialog::Debugf(FText::FromString(fContent), &header);
+		return;
+	}
+
     hasCast = true;
+
     currentStage = AGameManager::TurnStage::SpellSelected;
     gm->RecomputeDjikstra();
-    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
-    // TODO: Incorporate range into whether or not a spell can be cast
     selectedSpell = 1;
-    //int dmg = spellbook->readiedSpells.at(0)->cast();
-    //other->health -= dmg;
 }
 
 void AWizard::hotkeyThree() {
     if (this != gm->turnPlayer) {
         other->hotkeyThree();
+		return;
     }
     if (hasCast) {
         UE_LOG(LogClass, Log, TEXT("Spell 3, already cast tho"));
@@ -380,19 +399,27 @@ void AWizard::hotkeyThree() {
         return;
     }
     UE_LOG(LogClass, Log, TEXT("Selected Spell 3"));
+
+	if (spellbook->readiedSpells.at(2)->cooldownTurnsRemaining > 0) {
+		UE_LOG(LogClass, Log, TEXT("Spell 3, on cooldown tho"));
+		FText header = FText::FromString("COOLDOWN");
+		std::string content = "This spell is on cooldown for " + std::to_string(spellbook->readiedSpells.at(2)->cooldownTurnsRemaining) + " more turns!";
+		FString fContent = content.c_str();
+		FMessageDialog::Debugf(FText::FromString(fContent), &header);
+		return;
+	}
+
     hasCast = true;
-    currentStage = AGameManager::TurnStage::SpellSelected;
+    
+	currentStage = AGameManager::TurnStage::SpellSelected;
     gm->RecomputeDjikstra();
-    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
-    // TODO: Incorporate range into whether or not a spell can be cast
     selectedSpell = 2;
-    //int dmg = spellbook->readiedSpells.at(0)->cast();
-    //other->health -= dmg;
 }
 
 void AWizard::hotkeyFour() {
     if (this != gm->turnPlayer) {
         other->hotkeyFour();
+		return;
     }
     if (hasCast) {
         UE_LOG(LogClass, Log, TEXT("Spell 4, already cast tho"));
@@ -407,19 +434,27 @@ void AWizard::hotkeyFour() {
         return;
     }
     UE_LOG(LogClass, Log, TEXT("Selected Spell 4"));
+
+	if (spellbook->readiedSpells.at(3)->cooldownTurnsRemaining > 0) {
+		UE_LOG(LogClass, Log, TEXT("Spell 4, on cooldown tho"));
+		FText header = FText::FromString("COOLDOWN");
+		std::string content = "This spell is on cooldown for " + std::to_string(spellbook->readiedSpells.at(3)->cooldownTurnsRemaining) + " more turns!";
+		FString fContent = content.c_str();
+		FMessageDialog::Debugf(FText::FromString(fContent), &header);
+		return;
+	}
+
     hasCast = true;
-    currentStage = AGameManager::TurnStage::SpellSelected;
+    
+	currentStage = AGameManager::TurnStage::SpellSelected;
     gm->RecomputeDjikstra();
-    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
-    // TODO: Incorporate range into whether or not a spell can be cast
     selectedSpell = 3;
-    //int dmg = spellbook->readiedSpells.at(0)->cast();
-    //other->health -= dmg;
 }
 
 void AWizard::hotkeyFive() {
     if (this != gm->turnPlayer) {
         other->hotkeyFive();
+		return;
     }
     if (hasCast) {
         UE_LOG(LogClass, Log, TEXT("Spell 5, already cast tho"));
@@ -434,33 +469,46 @@ void AWizard::hotkeyFive() {
         return;
     }
     UE_LOG(LogClass, Log, TEXT("Selected Spell 5"));
+
+	if (spellbook->readiedSpells.at(4)->cooldownTurnsRemaining > 0) {
+		UE_LOG(LogClass, Log, TEXT("Spell 5, on cooldown tho"));
+		FText header = FText::FromString("COOLDOWN");
+		std::string content = "This spell is on cooldown for " + std::to_string(spellbook->readiedSpells.at(4)->cooldownTurnsRemaining) + " more turns!";
+		FString fContent = content.c_str();
+		FMessageDialog::Debugf(FText::FromString(fContent), &header);
+		return;
+	}
+
     hasCast = true;
-    currentStage = AGameManager::TurnStage::SpellSelected;
+    
+	currentStage = AGameManager::TurnStage::SpellSelected;
     gm->RecomputeDjikstra();
-    // TODO: JOE: Each spell's cast() function returns the damage it did and applies it to the other player here
-    // TODO: Incorporate range into whether or not a spell can be cast
     selectedSpell = 4;
-    //int dmg = spellbook->readiedSpells.at(0)->cast();
-    //other->health -= dmg;
 }
 
 void AWizard::spellOne() {
-  UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
+	UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
+
+	// Apply accuracy boost
+	spellbook->readiedSpells.at(0)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+	// Cast
 	SpellResult r = spellbook->readiedSpells.at(0)->cast();
 
-	// TODO: Uncomment this once a getElement() function is written for each tile; potentially add condition that tile can't be on cooldown to earn bonus
-	// Apply tile element bonus
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	// Reset outgoing accuracy buff no matter what
+	this->outgoingAccuracyBuff = 0;
 
-	other->health -= std::get<0>(r) * (1 + this->outgoingDamageBuff) * (1 - other->incomingDamageBuff);
+	// If we're standing on a tile that's the same element as the spell we're casting, boost each aspect
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
+
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
 	if (std::get<0>(r) > 0) {
-		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
 		other->incomingDamageBuff = 0;
 	}
@@ -479,6 +527,7 @@ void AWizard::spellOne() {
 			this->incomingDamageBuff = std::get<2>(r);
 		}
 		else {
+			// Incoming damage increases for the opponent haven't been added, but this allows us to put them in if we want
 			other->incomingDamageBuff = std::get<2>(r);
 		}
 		
@@ -494,14 +543,19 @@ void AWizard::spellOne() {
 
 void AWizard::spellTwo() {
     UE_LOG(LogClass, Log, TEXT("Casted spell 2"));
+
+	spellbook->readiedSpells.at(1)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(1)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -534,15 +588,20 @@ void AWizard::spellTwo() {
 }
 
 void AWizard::spellThree() {
-    UE_LOG(LogClass, Log, TEXT("Casted spell 3"));
+	UE_LOG(LogClass, Log, TEXT("Casted spell 3"));
+
+	spellbook->readiedSpells.at(2)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(2)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -575,15 +634,20 @@ void AWizard::spellThree() {
 }
 
 void AWizard::spellFour() {
-    UE_LOG(LogClass, Log, TEXT("Casted spell 4"));
+	UE_LOG(LogClass, Log, TEXT("Casted spell 4"));
+
+	spellbook->readiedSpells.at(3)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(3)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
@@ -616,15 +680,20 @@ void AWizard::spellFour() {
 }
 
 void AWizard::spellFive() {
-    UE_LOG(LogClass, Log, TEXT("Casted spell 5"));
+	UE_LOG(LogClass, Log, TEXT("Casted spell 5"));
+
+	spellbook->readiedSpells.at(4)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
 	SpellResult r = spellbook->readiedSpells.at(4)->cast();
 
-	//if (spellbook->readiedSpells.at(0)->element == gm->GetTurnPlayerTile().getElement()) {
-	//	std::get<0>(r) *= 1.2;
-	//	std::get<1>(r) *= 1.2;
-	//	std::get<2>(r) *= 1.2;
-	//	std::get<3>(r) *= 1.2;
-	//}
+	this->outgoingAccuracyBuff = 0;
+
+	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+		std::get<0>(r) *= 1.2;
+		std::get<1>(r) *= 1.2;
+		std::get<2>(r) *= 1.2;
+		std::get<3>(r) *= 1.2;
+	}
 
 	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {

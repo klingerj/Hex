@@ -19,8 +19,10 @@ SpellResult AMinorEarthDamage::cast() {
 		std::get<0>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 2;
 	return result;
 }
 
-
+int AMinorEarthDamage::getSpellID() {
+	return 9;
+}

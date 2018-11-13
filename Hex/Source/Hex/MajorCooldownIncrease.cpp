@@ -23,8 +23,10 @@ SpellResult AMajorCooldownIncrease::cast() {
 		break;
 	}
 	}
-
+	cooldownTurnsRemaining = 4;
 	return result;
 }
 
-
+int AMajorCooldownIncrease::getSpellID() {
+	return 11;
+}

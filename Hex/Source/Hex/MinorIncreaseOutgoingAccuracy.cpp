@@ -19,8 +19,10 @@ SpellResult AMinorIncreaseOutgoingAccuracy::cast() {
 		std::get<1>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 2;
 	return result;
 }
 
-
+int AMinorIncreaseOutgoingAccuracy::getSpellID() {
+	return 6;
+}

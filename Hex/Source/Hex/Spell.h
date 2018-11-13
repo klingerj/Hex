@@ -48,6 +48,9 @@ public:
 	Element element;
 	SpellType type;
 
+	// Cooldown
+	int cooldownTurnsRemaining;
+
 	// Member of (0, 100]
 	int originalAccuracy;
 	int accuracy;
@@ -58,7 +61,7 @@ public:
   int range;
 
 	/// PROPERTIES OF SOME SPELLS -- All spells will have these fields, but they will be accessed based on the "type" variable
-	// How much damage this does on hit (range)
+	// How much damage this does on hit
 	int originalMin, originalMax;
 	int damageMin, damageMax;
 	// Number of tiles affected when this spell hits (i.e. - its area of effect)
@@ -66,6 +69,7 @@ public:
 
 	/// SPELL FUNCTIONS
 	virtual SpellResult cast();
+	virtual int getSpellID();
 
 	/// UTILITY FUNCTIONS
 	std::string elementToString();

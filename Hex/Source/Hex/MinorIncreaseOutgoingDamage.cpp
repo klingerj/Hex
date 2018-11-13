@@ -19,8 +19,10 @@ SpellResult AMinorIncreaseOutgoingDamage::cast() {
 		std::get<3>(result) = 0;
 		break;
 	}
-
+	cooldownTurnsRemaining = 2;
 	return result;
 }
 
-
+int AMinorIncreaseOutgoingDamage::getSpellID() {
+	return 2;
+}
