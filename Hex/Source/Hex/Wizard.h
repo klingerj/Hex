@@ -36,12 +36,18 @@ public:
 	/// GAMEPLAY FUNCTIONS
 	// Turn phases
 	void applyTileEffects();
+
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void castSpell();
+
 	void craftSpell();
+
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void move();
+
 	void startGame();
 
-  UFUNCTION(BlueprintCallable, Category = "Game State")
+    UFUNCTION(BlueprintCallable, Category = "Game State")
 	void endTurn();
 
 	// Hotkey spells
@@ -77,7 +83,10 @@ public:
   bool GetDisplayControls();
 
 	// Max stats
-	int maxHealth, originalSpeed;
+  	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+	int maxHealth;
+
+	int originalSpeed;
 	// Track if certain actions have been taken and what stage of the turn we're in
 	bool hasCast, hasCrafted, hasMoved, gameNotStarted;
 	AGameManager::TurnStage currentStage;

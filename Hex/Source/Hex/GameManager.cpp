@@ -101,11 +101,32 @@ void AGameManager::Tick(float DeltaTime)
 
 	// Only call the event stages once
 	switch (turnPlayer->currentStage) {
+        case DoCooldowns:
+        {
+            UE_LOG(LogClass, Log, TEXT("Advancing Cooldowns!"));
+
+            for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
+                AHexGridTile* currentTile = *actorIter;
+                if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                    UE_LOG(LogClass, Log, TEXT("About to advance cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+                }
+                currentTile->hexGridTileEffect->AdvanceCooldown();
+                if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
+                    UE_LOG(LogClass, Log, TEXT("Advanced cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
+                }
+            }
+
+            for (int i = 0; i < 5; ++i) {
+                ASpell* s = turnPlayer->spellbook->readiedSpells.at(i);
+                if (s != nullptr && s->cooldownTurnsRemaining > 0) {
+                    turnPlayer->spellbook->readiedSpells.at(i)->cooldownTurnsRemaining--;
+                }
+            }
+            turnPlayer->currentStage = TurnStage::Move;
+            break;
+        }
 		case TurnStage::ApplyEffects:
 		{
-		if (!turnPlayer->currentTile->hexGridTileEffect->IsOnCooldown()) { // if the tile is not on cooldown
-			turnPlayer->currentTile->hexGridTileEffect->ResetCooldown(); // pretend we collected a resource
-		}
 		turnPlayer->currentStage = TurnStage::Listening;
 		break;
 		}
@@ -121,11 +142,15 @@ void AGameManager::Tick(float DeltaTime)
 
 		case TurnStage::Move:
 			//UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
+            // Advance the cooldown for all tiles
 			break;
     
 		case TurnStage::MoveEnd:
 		  UE_LOG(LogClass, Log, TEXT("Player %d moved"), int(turn) + 1);
-		  turnPlayer->currentStage = TurnStage::Listening;
+          if (!turnPlayer->currentTile->hexGridTileEffect->IsOnCooldown()) { // if the tile is not on cooldown
+            turnPlayer->currentTile->hexGridTileEffect->ResetCooldown(); // pretend we collected a resource
+            }
+		  turnPlayer->currentStage = TurnStage::ApplyEffects;
 		  break;
 
 		case TurnStage::SpellSelected:
@@ -145,27 +170,6 @@ void AGameManager::Tick(float DeltaTime)
 			}
 			UE_LOG(LogClass, Log, TEXT("Ending turn for Player %d"), int(turn) + 1);
 
-			// Advance the cooldown for all tiles
-			UE_LOG(LogClass, Log, TEXT("Advancing Cooldowns!"));
-
-			for (TActorIterator<AHexGridTile> actorIter(GetWorld()); actorIter; ++actorIter) {
-				AHexGridTile* currentTile = *actorIter;
-				if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
-					UE_LOG(LogClass, Log, TEXT("About to advance cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
-				}
-				currentTile->hexGridTileEffect->AdvanceCooldown();
-				if (currentTile->hexGridTileEffect->remainingCooldownTurns > 0) {
-					UE_LOG(LogClass, Log, TEXT("Advanced cooldown for tile with ID %d, remaining turns = %d"), currentTile->ID, currentTile->hexGridTileEffect->remainingCooldownTurns);
-				}
-			}
-
-			for (int i = 0; i < 5; ++i) {
-				ASpell* s = turnPlayer->spellbook->readiedSpells.at(i);
-				if (s != nullptr && s->cooldownTurnsRemaining > 0) {
-					turnPlayer->spellbook->readiedSpells.at(i)->cooldownTurnsRemaining--;
-				}
-			}
-
 			turn = !turn;
 			turnCounter++;
 			turnSwapped = true;
@@ -174,8 +178,7 @@ void AGameManager::Tick(float DeltaTime)
 			otherPlayer = (!turn) ? (playerTwo) : (playerOne);
 
 			RecomputeDjikstra();
-			UE_LOG(LogClass, Log, TEXT("Tryna move to apply effects stage. Turn is: %d"), turn);
-			turnPlayer->currentStage = TurnStage::ApplyEffects;
+			turnPlayer->currentStage = TurnStage::DoCooldowns;
 			break;
 
 		case TurnStage::Listening:

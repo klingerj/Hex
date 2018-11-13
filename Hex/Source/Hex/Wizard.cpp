@@ -265,8 +265,8 @@ void AWizard::startGame() {
 	gameNotStarted = false;
 	other->gameNotStarted = false;
 
-	currentStage = AGameManager::TurnStage::ApplyEffects;
-	other->currentStage = AGameManager::TurnStage::ApplyEffects;
+	currentStage = AGameManager::TurnStage::DoCooldowns;
+	other->currentStage = AGameManager::TurnStage::DoCooldowns;
 }
 
 int AWizard::GetHealth() const {
