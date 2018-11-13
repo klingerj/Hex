@@ -22,7 +22,7 @@ outgoingDamageBuff(0), incomingDamageBuff(0), outgoingAccuracyBuff(0)
 	// Set stats according to character class (can obviously change these as we develop combat)
 	switch (className) {
 		case WizardClass::AllAround:
-			maxHealth = 100; //TODO: Tweak this
+			maxHealth = 200; //TODO: Tweak this
 			originalSpeed = 2;
 			break;
   

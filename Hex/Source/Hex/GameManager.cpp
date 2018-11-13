@@ -54,8 +54,8 @@ void AGameManager::Setup() {
 
         uint32 playerOneGridIndexX = 0;
         uint32 playerOneGridIndexY = 0;
-        uint32 playerTwoGridIndexX = 3;
-        uint32 playerTwoGridIndexY = 3;
+        uint32 playerTwoGridIndexX = 4;
+        uint32 playerTwoGridIndexY = 4;
 
         for (TActorIterator<AHexGridTile> actorIter(World); actorIter; ++actorIter) {
             if ((*actorIter)->gridIndexX == playerOneGridIndexX && (*actorIter)->gridIndexY == playerOneGridIndexY) {
@@ -211,7 +211,7 @@ AHexGridTile* AGameManager::GetTurnPlayerTile() const {
 
 void AGameManager::SetTurnPlayerTile(AHexGridTile* targetMoveTile) {
     turnPlayer->currentTile = targetMoveTile;
-    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation() + FVector(0.f, 0.f, 20.f));
+    turnPlayer->SetActorLocation(turnPlayer->currentTile->GetActorLocation());
     turnPlayer->currentStage = TurnStage::MoveEnd;
 }
 
@@ -278,23 +278,121 @@ void AGameManager::AddSpellIDToSpellbook(int id) {
     }
     case 1:
     {
-        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorWaterDamage>(AMinorWaterDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
         turnPlayer->spellbook->addCraftedSpell(craftedSpell);
-        UE_LOG(LogClass, Log, TEXT("Created a minor outgoing damage increase spell"));
-        /*ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
-        turnPlayer->spellbook->addCraftedSpell(craftedSpell);*/ // water spell
+        UE_LOG(LogClass, Log, TEXT("Created a minor water damage spell"));
         break;
     }
     case 2:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorIncreaseOutgoingDamage>(AMinorIncreaseOutgoingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor increase outgoing damage spell"));
+        break;
+    }
+    case 3:
     {
         ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorCooldownDecrease>(AMinorCooldownDecrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
         turnPlayer->spellbook->addCraftedSpell(craftedSpell);
         UE_LOG(LogClass, Log, TEXT("Created a minor cooldown decrease spell"));
         break;
     }
-    case 3:
+    case 4:
     {
-        
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorDecreaseOutgoingDamage>(AMinorDecreaseOutgoingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor decrease outgoing damage spell"));
+        break;
+    }
+    case 5:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorElectricDamage>(AMinorElectricDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor electric damage spell"));
+        break;
+    }
+    case 6:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorIncreaseOutgoingAccuracy>(AMinorIncreaseOutgoingAccuracy::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor increase outgoing accuracy spell"));
+        break;
+    }
+    case 7:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorReduceIncomingDamage>(AMinorReduceIncomingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor reduce incoming damage spell"));
+        break;
+    }
+    case 8:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorCooldownIncrease>(AMinorCooldownIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor cooldown increase spell"));
+        break;
+    }
+    case 9:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorEarthDamage>(AMinorEarthDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor earth damage spell"));
+        break;
+    }
+    case 10:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorCooldownDecrease>(AMajorCooldownDecrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major cooldown decrease spell"));
+        break;
+    }
+    case 11:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorCooldownIncrease>(AMajorCooldownIncrease::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major cooldown increase spell"));
+        break;
+    }
+    case 12:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorDecreaseOutgoingAccuracy>(AMajorDecreaseOutgoingAccuracy::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major decrease outgoing accuracy spell"));
+        break;
+    }
+    case 13:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorDecreaseOutgoingDamage>(AMajorDecreaseOutgoingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major decrease outgoing damage spell"));
+        break;
+    }
+    case 14:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorIncreaseOutgoingAccuracy>(AMajorIncreaseOutgoingAccuracy::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major increase outgoing accuracy spell"));
+        break;
+    }
+    case 15:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorIncreaseOutgoingDamage>(AMajorIncreaseOutgoingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major increase outgoing damage spell"));
+        break;
+    }
+    case 16:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMajorReduceIncomingDamage>(AMajorReduceIncomingDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a major reduce incoming damage spell"));
+        break;
+    }
+    case 17:
+    {
+        ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorDecreaseOutgoingAccuracy>(AMinorDecreaseOutgoingAccuracy::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
+        turnPlayer->spellbook->addCraftedSpell(craftedSpell);
+        UE_LOG(LogClass, Log, TEXT("Created a minor decrease outgoing accuracy spell"));
         break;
     }
     }
