@@ -2,7 +2,7 @@
 
 #include "MinorWaterDamage.h"
 
-AMinorWaterDamage::AMinorWaterDamage() : ASpell(Element::Water, SpellType::Damage, "Splash", 5, 15, 85, 2, 1) {
+AMinorWaterDamage::AMinorWaterDamage() : ASpell(Element::Water, SpellType::Damage, "Undertow", 5, 15, 85, 2, 1) {
 	description = "Element: Water, Damage: 5 - 15, Accuracy: 85%, Range: 2";
 }
 

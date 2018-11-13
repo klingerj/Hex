@@ -2,7 +2,7 @@
 
 #include "MinorEarthDamage.h"
 
-AMinorEarthDamage::AMinorEarthDamage() : ASpell(Element::Earth, SpellType::Damage, "Mudball", 10, 15, 80, 2, 1) {
+AMinorEarthDamage::AMinorEarthDamage() : ASpell(Element::Earth, SpellType::Damage, "Rockslide", 10, 15, 80, 2, 1) {
 	description = "Element: Earth, Damage: 10 - 15, Accuracy: 80%, Range: 2";
 }
 

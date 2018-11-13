@@ -7,8 +7,8 @@
 #include "EngineUtils.h"
 #include "Engine/World.h"
 
-AMajorCooldownDecrease::AMajorCooldownDecrease() : ASpell(Element::Earth, SpellType::Terrain, "Soothe", 0, 0, 50, 2, 1) {
-	description = "Element: Earth, Decrease the selected tile's cooldown by up to 3 turns, Accuracy: 50%, Range: 2";
+AMajorCooldownDecrease::AMajorCooldownDecrease() : ASpell(Element::Earth, SpellType::Terrain, "Soothe", 0, 0, 40, 2, 1) {
+	description = "Element: Earth, Decrease the selected tile's cooldown by up to 4 turns, Accuracy: 40%, Range: 2";
 }
 
 SpellResult AMajorCooldownDecrease::cast() {
@@ -18,7 +18,7 @@ SpellResult AMajorCooldownDecrease::cast() {
 	{
 		for (TActorIterator<AGameManager> actorIter(GetWorld()); actorIter; ++actorIter) {
 			AHexGridTile* currentTile = (*actorIter)->turnPlayer->currentTile;
-			for (int i = 0; i < 3 && currentTile->hexGridTileEffect->remainingCooldownTurns > 0 ; ++i) {
+			for (int i = 0; i < 4 && currentTile->hexGridTileEffect->remainingCooldownTurns > 0 ; ++i) {
 				currentTile->hexGridTileEffect->AdvanceCooldown();
 			}
 		}

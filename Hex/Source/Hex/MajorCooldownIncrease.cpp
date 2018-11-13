@@ -8,7 +8,7 @@
 #include "Engine/World.h"
 
 AMajorCooldownIncrease::AMajorCooldownIncrease() : ASpell(Element::Earth, SpellType::Terrain, "Overheat", 0, 0, 40, 2, 1) {
-	description = "Element: Earth, Increase the selected tile's cooldown by up to 3 turns, Accuracy: 40%, Range: 2";
+	description = "Element: Earth, Increase the selected tile's cooldown by up to 4 turns, Accuracy: 40%, Range: 2";
 }
 
 SpellResult AMajorCooldownIncrease::cast() {
