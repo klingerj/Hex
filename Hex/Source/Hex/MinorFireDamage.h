@@ -19,4 +19,5 @@ public:
 
 public:
 	virtual SpellResult cast() override;
+	virtual int getSpellID() override;
 };

@@ -23,7 +23,7 @@ int AMinorDamageBoost::applyEffect(ASpell& s) const {
 			return 1;
 			break;
 	}
-
+	
 	return 0;
 }
 

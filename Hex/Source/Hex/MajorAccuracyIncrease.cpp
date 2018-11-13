@@ -10,7 +10,6 @@ int AMajorAccuracyIncrease::applyEffect(ASpell& s) const {
 	case 0:
 	{
 		s.accuracy += boost;
-
 		std::string msg = s.name + " now has an accuracy of " + std::to_string(s.accuracy) + "%!";
 		FString msgF(msg.c_str());
 		FText header = FText::FromString("SPELLCRAFT SUCCESSFUL");
