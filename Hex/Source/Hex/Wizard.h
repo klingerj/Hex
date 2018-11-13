@@ -83,7 +83,10 @@ public:
   bool GetDisplayControls();
 
 	// Max stats
-	int maxHealth, originalSpeed;
+  	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooldown")
+	int maxHealth;
+
+	int originalSpeed;
 	// Track if certain actions have been taken and what stage of the turn we're in
 	bool hasCast, hasCrafted, hasMoved, gameNotStarted;
 	AGameManager::TurnStage currentStage;
