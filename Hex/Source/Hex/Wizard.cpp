@@ -489,54 +489,66 @@ void AWizard::hotkeyFive() {
 void AWizard::spellOne() {
 	UE_LOG(LogClass, Log, TEXT("Casted spell 1"));
 
-	// Apply accuracy boost
-	spellbook->readiedSpells.at(0)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
-
-	// Cast
-	SpellResult r = spellbook->readiedSpells.at(0)->cast();
-
-	// Reset outgoing accuracy buff no matter what
-	this->outgoingAccuracyBuff = 0;
-
-	// If we're standing on a tile that's the same element as the spell we're casting, boost each aspect
-	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
-		std::get<0>(r) *= 1.2;
-		std::get<1>(r) *= 1.2;
-		std::get<2>(r) *= 1.2;
-		std::get<3>(r) *= 1.2;
+	if (!spellbook->readiedSpells.at(0)) {
+		// Selected spell does not exist
+		FText header = FText::FromString("SPELLBOOK SLOT EMPTY");
+		std::string msg = "You have not crafted a spell in this slot!";
+		FString fMsg = msg.c_str();
+		FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+		return;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
-	if (std::get<0>(r) > 0) {
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		// Apply buffs/debuffs; note that only one can be applied at a time
-		// Outgoing accuracy buff/debuff
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
+	// If the player chooses a tile out of range, do nothing
+	if (spellbook->readiedSpells.at(0)->range < currentTile->distanceToMove) {
+		// Apply accuracy boost
+		spellbook->readiedSpells.at(0)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+		// Cast
+		SpellResult r = spellbook->readiedSpells.at(0)->cast();
+
+		// Reset outgoing accuracy buff no matter what
+		this->outgoingAccuracyBuff = 0;
+
+		// If we're standing on a tile that's the same element as the spell we're casting, boost each aspect
+		if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+			std::get<0>(r) *= 1.2;
+			std::get<1>(r) *= 1.2;
+			std::get<2>(r) *= 1.2;
+			std::get<3>(r) *= 1.2;
+		}
+
+		other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+		// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
+		if (std::get<0>(r) > 0) {
+			this->outgoingDamageBuff = 0;
+			other->incomingDamageBuff = 0;
 		}
 		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		
-		// Incoming damage buff/debuff
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
-		}
-		else {
-			// Incoming damage increases for the opponent haven't been added, but this allows us to put them in if we want
-			other->incomingDamageBuff = std::get<2>(r);
-		}
-		
-		// Outgoing damage buff/debuff
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
+			// Apply buffs/debuffs; note that only one can be applied at a time
+			// Outgoing accuracy buff/debuff
+			if (std::get<1>(r) < 0) {
+				other->outgoingAccuracyBuff = std::get<1>(r);
+			}
+			else {
+				this->outgoingAccuracyBuff = std::get<1>(r);
+			}
+
+			// Incoming damage buff/debuff
+			if (std::get<2>(r) < 0) {
+				this->incomingDamageBuff = std::get<2>(r);
+			}
+			else {
+				// Incoming damage increases for the opponent haven't been added, but this allows us to put them in if we want
+				other->incomingDamageBuff = std::get<2>(r);
+			}
+
+			// Outgoing damage buff/debuff
+			if (std::get<3>(r) < 0) {
+				other->outgoingDamageBuff = std::get<3>(r);
+			}
+			else {
+				this->outgoingDamageBuff = std::get<3>(r);
+			}
 		}
 	}
 }
@@ -544,45 +556,56 @@ void AWizard::spellOne() {
 void AWizard::spellTwo() {
     UE_LOG(LogClass, Log, TEXT("Casted spell 2"));
 
-	spellbook->readiedSpells.at(1)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
-
-	SpellResult r = spellbook->readiedSpells.at(1)->cast();
-
-	this->outgoingAccuracyBuff = 0;
-
-	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
-		std::get<0>(r) *= 1.2;
-		std::get<1>(r) *= 1.2;
-		std::get<2>(r) *= 1.2;
-		std::get<3>(r) *= 1.2;
+	if (!spellbook->readiedSpells.at(1)) {
+		// Selected spell does not exist
+		FText header = FText::FromString("SPELLBOOK SLOT EMPTY");
+		std::string msg = "You have not crafted a spell in this slot!";
+		FString fMsg = msg.c_str();
+		FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+		return;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	if (std::get<0>(r) > 0) {
+	if (spellbook->readiedSpells.at(1)->range < currentTile->distanceToMove) {
+		spellbook->readiedSpells.at(1)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+		SpellResult r = spellbook->readiedSpells.at(1)->cast();
+
 		this->outgoingAccuracyBuff = 0;
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
+
+		if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+			std::get<0>(r) *= 1.2;
+			std::get<1>(r) *= 1.2;
+			std::get<2>(r) *= 1.2;
+			std::get<3>(r) *= 1.2;
 		}
 
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
+		other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+		if (std::get<0>(r) > 0) {
+			this->outgoingAccuracyBuff = 0;
+			this->outgoingDamageBuff = 0;
+			other->incomingDamageBuff = 0;
 		}
 		else {
-			other->incomingDamageBuff = std::get<2>(r);
-		}
+			if (std::get<1>(r) < 0) {
+				other->outgoingAccuracyBuff = std::get<1>(r);
+			}
+			else {
+				this->outgoingAccuracyBuff = std::get<1>(r);
+			}
 
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
+			if (std::get<2>(r) < 0) {
+				this->incomingDamageBuff = std::get<2>(r);
+			}
+			else {
+				other->incomingDamageBuff = std::get<2>(r);
+			}
+
+			if (std::get<3>(r) < 0) {
+				other->outgoingDamageBuff = std::get<3>(r);
+			}
+			else {
+				this->outgoingDamageBuff = std::get<3>(r);
+			}
 		}
 	}
 }
@@ -590,45 +613,56 @@ void AWizard::spellTwo() {
 void AWizard::spellThree() {
 	UE_LOG(LogClass, Log, TEXT("Casted spell 3"));
 
-	spellbook->readiedSpells.at(2)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
-
-	SpellResult r = spellbook->readiedSpells.at(2)->cast();
-
-	this->outgoingAccuracyBuff = 0;
-
-	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
-		std::get<0>(r) *= 1.2;
-		std::get<1>(r) *= 1.2;
-		std::get<2>(r) *= 1.2;
-		std::get<3>(r) *= 1.2;
+	if (!spellbook->readiedSpells.at(2)) {
+		// Selected spell does not exist
+		FText header = FText::FromString("SPELLBOOK SLOT EMPTY");
+		std::string msg = "You have not crafted a spell in this slot!";
+		FString fMsg = msg.c_str();
+		FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+		return;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	if (std::get<0>(r) > 0) {
+	if (spellbook->readiedSpells.at(2)->range < currentTile->distanceToMove) {
+		spellbook->readiedSpells.at(2)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+		SpellResult r = spellbook->readiedSpells.at(2)->cast();
+
 		this->outgoingAccuracyBuff = 0;
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
+
+		if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+			std::get<0>(r) *= 1.2;
+			std::get<1>(r) *= 1.2;
+			std::get<2>(r) *= 1.2;
+			std::get<3>(r) *= 1.2;
 		}
 
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
+		other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+		if (std::get<0>(r) > 0) {
+			this->outgoingAccuracyBuff = 0;
+			this->outgoingDamageBuff = 0;
+			other->incomingDamageBuff = 0;
 		}
 		else {
-			other->incomingDamageBuff = std::get<2>(r);
-		}
+			if (std::get<1>(r) < 0) {
+				other->outgoingAccuracyBuff = std::get<1>(r);
+			}
+			else {
+				this->outgoingAccuracyBuff = std::get<1>(r);
+			}
 
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
+			if (std::get<2>(r) < 0) {
+				this->incomingDamageBuff = std::get<2>(r);
+			}
+			else {
+				other->incomingDamageBuff = std::get<2>(r);
+			}
+
+			if (std::get<3>(r) < 0) {
+				other->outgoingDamageBuff = std::get<3>(r);
+			}
+			else {
+				this->outgoingDamageBuff = std::get<3>(r);
+			}
 		}
 	}
 }
@@ -636,45 +670,56 @@ void AWizard::spellThree() {
 void AWizard::spellFour() {
 	UE_LOG(LogClass, Log, TEXT("Casted spell 4"));
 
-	spellbook->readiedSpells.at(3)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
-
-	SpellResult r = spellbook->readiedSpells.at(3)->cast();
-
-	this->outgoingAccuracyBuff = 0;
-
-	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
-		std::get<0>(r) *= 1.2;
-		std::get<1>(r) *= 1.2;
-		std::get<2>(r) *= 1.2;
-		std::get<3>(r) *= 1.2;
+	if (!spellbook->readiedSpells.at(3)) {
+		// Selected spell does not exist
+		FText header = FText::FromString("SPELLBOOK SLOT EMPTY");
+		std::string msg = "You have not crafted a spell in this slot!";
+		FString fMsg = msg.c_str();
+		FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+		return;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	if (std::get<0>(r) > 0) {
+	if (spellbook->readiedSpells.at(3)->range < currentTile->distanceToMove) {
+		spellbook->readiedSpells.at(3)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+		SpellResult r = spellbook->readiedSpells.at(3)->cast();
+
 		this->outgoingAccuracyBuff = 0;
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
+
+		if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+			std::get<0>(r) *= 1.2;
+			std::get<1>(r) *= 1.2;
+			std::get<2>(r) *= 1.2;
+			std::get<3>(r) *= 1.2;
 		}
 
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
+		other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+		if (std::get<0>(r) > 0) {
+			this->outgoingAccuracyBuff = 0;
+			this->outgoingDamageBuff = 0;
+			other->incomingDamageBuff = 0;
 		}
 		else {
-			other->incomingDamageBuff = std::get<2>(r);
-		}
+			if (std::get<1>(r) < 0) {
+				other->outgoingAccuracyBuff = std::get<1>(r);
+			}
+			else {
+				this->outgoingAccuracyBuff = std::get<1>(r);
+			}
 
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
+			if (std::get<2>(r) < 0) {
+				this->incomingDamageBuff = std::get<2>(r);
+			}
+			else {
+				other->incomingDamageBuff = std::get<2>(r);
+			}
+
+			if (std::get<3>(r) < 0) {
+				other->outgoingDamageBuff = std::get<3>(r);
+			}
+			else {
+				this->outgoingDamageBuff = std::get<3>(r);
+			}
 		}
 	}
 }
@@ -682,45 +727,56 @@ void AWizard::spellFour() {
 void AWizard::spellFive() {
 	UE_LOG(LogClass, Log, TEXT("Casted spell 5"));
 
-	spellbook->readiedSpells.at(4)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
-
-	SpellResult r = spellbook->readiedSpells.at(4)->cast();
-
-	this->outgoingAccuracyBuff = 0;
-
-	if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
-		std::get<0>(r) *= 1.2;
-		std::get<1>(r) *= 1.2;
-		std::get<2>(r) *= 1.2;
-		std::get<3>(r) *= 1.2;
+	if (!spellbook->readiedSpells.at(4)) {
+		// Selected spell does not exist
+		FText header = FText::FromString("SPELLBOOK SLOT EMPTY");
+		std::string msg = "You have not crafted a spell in this slot!";
+		FString fMsg = msg.c_str();
+		FMessageDialog::Debugf(FText::FromString(fMsg), &header);
+		return;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
-	if (std::get<0>(r) > 0) {
+	if (spellbook->readiedSpells.at(4)->range < currentTile->distanceToMove) {
+		spellbook->readiedSpells.at(4)->accuracy *= (1 + 0.01 * this->outgoingAccuracyBuff);
+
+		SpellResult r = spellbook->readiedSpells.at(4)->cast();
+
 		this->outgoingAccuracyBuff = 0;
-		this->outgoingDamageBuff = 0;
-		other->incomingDamageBuff = 0;
-	}
-	else {
-		if (std::get<1>(r) < 0) {
-			other->outgoingAccuracyBuff = std::get<1>(r);
-		}
-		else {
-			this->outgoingAccuracyBuff = std::get<1>(r);
+
+		if (int(spellbook->readiedSpells.at(0)->element) == gm->GetTurnPlayerTile()->element) {
+			std::get<0>(r) *= 1.2;
+			std::get<1>(r) *= 1.2;
+			std::get<2>(r) *= 1.2;
+			std::get<3>(r) *= 1.2;
 		}
 
-		if (std::get<2>(r) < 0) {
-			this->incomingDamageBuff = std::get<2>(r);
+		other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+		if (std::get<0>(r) > 0) {
+			this->outgoingAccuracyBuff = 0;
+			this->outgoingDamageBuff = 0;
+			other->incomingDamageBuff = 0;
 		}
 		else {
-			other->incomingDamageBuff = std::get<2>(r);
-		}
+			if (std::get<1>(r) < 0) {
+				other->outgoingAccuracyBuff = std::get<1>(r);
+			}
+			else {
+				this->outgoingAccuracyBuff = std::get<1>(r);
+			}
 
-		if (std::get<3>(r) < 0) {
-			other->outgoingDamageBuff = std::get<3>(r);
-		}
-		else {
-			this->outgoingDamageBuff = std::get<3>(r);
+			if (std::get<2>(r) < 0) {
+				this->incomingDamageBuff = std::get<2>(r);
+			}
+			else {
+				other->incomingDamageBuff = std::get<2>(r);
+			}
+
+			if (std::get<3>(r) < 0) {
+				other->outgoingDamageBuff = std::get<3>(r);
+			}
+			else {
+				this->outgoingDamageBuff = std::get<3>(r);
+			}
 		}
 	}
 }
