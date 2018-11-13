@@ -44,6 +44,9 @@ public:
 	std::string name;
   
   std::string description;
+
+  UFUNCTION(BlueprintCallable, Category = "Spells")
+  FString GetDescription() const;
 	
 	Element element;
 	SpellType type;

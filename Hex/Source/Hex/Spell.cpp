@@ -69,3 +69,7 @@ std::string ASpell::elementToString() {
 int ASpell::getSpellID() {
 	return -1;
 }
+
+FString ASpell::GetDescription() const {
+    return FString(description.c_str());
+}

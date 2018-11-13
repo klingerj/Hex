@@ -3,7 +3,7 @@
 #include "MajorIncreaseOutgoingAccuracy.h"
 
 AMajorIncreaseOutgoingAccuracy::AMajorIncreaseOutgoingAccuracy() : ASpell(Element::Water, SpellType::BuffDebuff, "Crystal Clarity", 0, 0, 100, 1, 1) {
-	description = "Element: Water, Outgoing Accuracy Boost: 15%, Accuracy: 100%, Range: 1";
+	description = "Element: Water, Outgoing Accuracy Boost: 15%,\n Accuracy: 100%, Range: 1";
 }
 
 SpellResult AMajorIncreaseOutgoingAccuracy::cast() {
@@ -24,5 +24,5 @@ SpellResult AMajorIncreaseOutgoingAccuracy::cast() {
 }
 
 int AMajorIncreaseOutgoingAccuracy::getSpellID() {
-	return 14;
+	return 15;
 }

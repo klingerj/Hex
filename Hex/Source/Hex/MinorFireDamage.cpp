@@ -3,7 +3,7 @@
 #include "MinorFireDamage.h"
 
 AMinorFireDamage::AMinorFireDamage() : ASpell(Element::Fire, SpellType::Damage, "Flare", 10, 20, 70, 2, 1) {
-    description = "Element: Fire, Damage: 10 - 20, Accuracy: 70%, Range: 2";
+    description = "Element: Fire, Damage: 10 - 20,\n Accuracy: 70%, Range: 2";
 }
 
 SpellResult AMinorFireDamage::cast() {
@@ -24,5 +24,5 @@ SpellResult AMinorFireDamage::cast() {
 }
 
 int AMinorFireDamage::getSpellID() {
-	return 0;
+	return 1;
 }

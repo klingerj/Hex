@@ -161,7 +161,9 @@ void AGameManager::Tick(float DeltaTime)
 		case TurnStage::SpellSelected:
 			//UE_LOG(LogClass, Log, TEXT("Player %d has selected spell %d"), int(turn) + 1, turnPlayer->selectedSpell);
 			break;
+    case TurnStage::DoneCasting:
 
+        break;
 		case TurnStage::End:
 			// TODO: Fix!
 			if (turnPlayer->health <= 0 || otherPlayer->health <= 0) {

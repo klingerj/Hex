@@ -8,7 +8,7 @@
 #include "Engine/World.h"
 
 AMinorCooldownDecrease::AMinorCooldownDecrease() : ASpell(Element::Earth, SpellType::Terrain, "Calm", 0, 0, 50, 2, 1) {
-	description = "Element: Earth, Decrease the selected tile's cooldown by 1 turn, Accuracy: 50%, Range: 2";
+	description = "Element: Earth, Decrease the selected tile's cooldown by 1 turn,\n Accuracy: 50%, Range: 2";
 }
 
 SpellResult AMinorCooldownDecrease::cast() {
@@ -28,6 +28,6 @@ SpellResult AMinorCooldownDecrease::cast() {
 }
 
 int AMinorCooldownDecrease::getSpellID() {
-	return 3;
+    return 4;
 }
 
