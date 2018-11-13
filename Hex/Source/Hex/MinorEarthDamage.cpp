@@ -3,7 +3,7 @@
 #include "MinorEarthDamage.h"
 
 AMinorEarthDamage::AMinorEarthDamage() : ASpell(Element::Earth, SpellType::Damage, "Rockslide", 10, 15, 80, 2, 1) {
-	description = "Element: Earth, Damage: 10 - 15, Accuracy: 80%, Range: 2";
+	description = "Element: Earth, Damage: 10 - 15,\n Accuracy: 80%, Range: 2";
 }
 
 // Returns the amount of damage done to the opponent
@@ -24,5 +24,5 @@ SpellResult AMinorEarthDamage::cast() {
 }
 
 int AMinorEarthDamage::getSpellID() {
-	return 9;
+	return 10;
 }

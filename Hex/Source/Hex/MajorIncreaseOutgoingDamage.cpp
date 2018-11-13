@@ -3,7 +3,7 @@
 #include "MajorIncreaseOutgoingDamage.h"
 
 AMajorIncreaseOutgoingDamage::AMajorIncreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Intensify", 0, 0, 100, 1, 1) {
-	description = "Element: Water, Outgoing Damage Boost: 25%, Accuracy: 100%, Range: 1";
+	description = "Element: Water, Outgoing Damage Boost: 25%,\n Accuracy: 100%, Range: 1";
 }
 
 SpellResult AMajorIncreaseOutgoingDamage::cast() {
@@ -24,6 +24,6 @@ SpellResult AMajorIncreaseOutgoingDamage::cast() {
 }
 
 int AMajorIncreaseOutgoingDamage::getSpellID() {
-	return 15;
+	return 16;
 }
 

@@ -3,7 +3,7 @@
 #include "MinorWaterDamage.h"
 
 AMinorWaterDamage::AMinorWaterDamage() : ASpell(Element::Water, SpellType::Damage, "Undertow", 5, 15, 85, 2, 1) {
-	description = "Element: Water, Damage: 5 - 15, Accuracy: 85%, Range: 2";
+	description = "Element: Water, Damage: 5 - 15,\n Accuracy: 85%, Range: 2";
 }
 
 SpellResult AMinorWaterDamage::cast() {
@@ -24,5 +24,5 @@ SpellResult AMinorWaterDamage::cast() {
 }
 
 int AMinorWaterDamage::getSpellID() {
-	return 1;
+	return 2;
 }

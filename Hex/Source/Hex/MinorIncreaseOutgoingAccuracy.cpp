@@ -3,7 +3,7 @@
 #include "MinorIncreaseOutgoingAccuracy.h"
 
 AMinorIncreaseOutgoingAccuracy::AMinorIncreaseOutgoingAccuracy() : ASpell(Element::Water, SpellType::BuffDebuff, "Clarity", 0, 0, 100, 1, 1) {
-	description = "Element: Water, Outgoing Accuracy Boost: 5%, Accuracy: 100%, Range: 1";
+	description = "Element: Water, Outgoing Accuracy Boost: 5%,\n Accuracy: 100%, Range: 1";
 }
 
 SpellResult AMinorIncreaseOutgoingAccuracy::cast() {
@@ -24,5 +24,5 @@ SpellResult AMinorIncreaseOutgoingAccuracy::cast() {
 }
 
 int AMinorIncreaseOutgoingAccuracy::getSpellID() {
-	return 6;
+	return 7;
 }

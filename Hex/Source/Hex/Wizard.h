@@ -45,6 +45,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void move();
 
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void startGame();
 
     UFUNCTION(BlueprintCallable, Category = "Game State")

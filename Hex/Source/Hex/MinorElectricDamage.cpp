@@ -3,7 +3,7 @@
 #include "MinorElectricDamage.h"
 
 AMinorElectricDamage::AMinorElectricDamage() : ASpell(Element::Electricity, SpellType::Damage, "Shock", 20, 30, 55, 2, 1) {
-    description = "Element: Electricity, Damage: 20 - 30, Accuracy: 55%, Range: 2";
+    description = "Element: Electricity, Damage: 20 - 30,\n Accuracy: 55%, Range: 2";
 }
 
 // Returns the amount of damage done to the opponent
@@ -24,5 +24,5 @@ SpellResult AMinorElectricDamage::cast() {
 }
 
 int AMinorElectricDamage::getSpellID() {
-	return 5;
+	return 6;
 }

@@ -221,7 +221,6 @@ void AHexGridGraphManager::SetShortestPath_Backwards(AHexGridTile* targetTile) {
     if (targetTile->onShortestPath) {
         return;
     }
-    UE_LOG(LogClass, Log, TEXT("Backtracking, current Tile ID: %d"), targetTile->ID);
     targetTile->onShortestPath = true;
     const std::set<AHexGridTile*>& prevNodes = targetTile->prevNodes;
     for (AHexGridTile* node : prevNodes) {

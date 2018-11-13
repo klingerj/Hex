@@ -3,7 +3,7 @@
 #include "MinorReduceIncomingDamage.h"
 
 AMinorReduceIncomingDamage::AMinorReduceIncomingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Shield", 0, 0, 100, 1, 1) {
-	description = "Element: Water, Incoming Damage Reduction: 10%, Accuracy: 100%, Range: 1";
+	description = "Element: Water, Incoming Damage Reduction: 10%,\n Accuracy: 100%, Range: 1";
 }
 
 SpellResult AMinorReduceIncomingDamage::cast() {
@@ -24,5 +24,5 @@ SpellResult AMinorReduceIncomingDamage::cast() {
 }
 
 int AMinorReduceIncomingDamage::getSpellID() {
-	return 7;
+	return 8;
 }

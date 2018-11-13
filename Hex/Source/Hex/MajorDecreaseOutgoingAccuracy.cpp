@@ -3,7 +3,7 @@
 #include "MajorDecreaseOutgoingAccuracy.h"
 
 AMajorDecreaseOutgoingAccuracy::AMajorDecreaseOutgoingAccuracy() : ASpell(Element::Water, SpellType::BuffDebuff, "Smog", 0, 0, 100, 3, 1) {
-	description = "Element: Water, Outgoing Accuracy Reduction: 15%, Accuracy: 100%, Range: 3";
+	description = "Element: Water, Outgoing Accuracy Reduction: 15%,\n Accuracy: 100%, Range: 3";
 }
 
 SpellResult AMajorDecreaseOutgoingAccuracy::cast() {
@@ -24,5 +24,5 @@ SpellResult AMajorDecreaseOutgoingAccuracy::cast() {
 }
 
 int AMajorDecreaseOutgoingAccuracy::getSpellID() {
-	return 12;
+	return 13;
 }

@@ -3,7 +3,7 @@
 #include "MinorDecreaseOutgoingDamage.h"
 
 AMinorDecreaseOutgoingDamage::AMinorDecreaseOutgoingDamage() : ASpell(Element::Water, SpellType::BuffDebuff, "Soften", 0, 0, 100, 3, 1) {
-	description = "Element: Water, Outgoing Damage Reduction: 10%, Accuracy: 100%, Range: 3";
+	description = "Element: Water, Outgoing Damage Reduction: 10%,\n Accuracy: 100%, Range: 3";
 }
 
 SpellResult AMinorDecreaseOutgoingDamage::cast() {
@@ -24,5 +24,5 @@ SpellResult AMinorDecreaseOutgoingDamage::cast() {
 }
 
 int AMinorDecreaseOutgoingDamage::getSpellID() {
-	return 4;
+	return 5;
 }

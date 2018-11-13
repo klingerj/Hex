@@ -17,7 +17,7 @@ UHexGridTileEffect::UHexGridTileEffect() {
 	PrimaryComponentTick.bCanEverTick = true;
 
   element = Element_Fire;
-  maxCooldownTurns = 3;
+  maxCooldownTurns = 4;
   remainingCooldownTurns = 0;
 }
 
