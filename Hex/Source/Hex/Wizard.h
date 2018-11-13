@@ -36,12 +36,18 @@ public:
 	/// GAMEPLAY FUNCTIONS
 	// Turn phases
 	void applyTileEffects();
+
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void castSpell();
+
 	void craftSpell();
+
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void move();
+
 	void startGame();
 
-  UFUNCTION(BlueprintCallable, Category = "Game State")
+    UFUNCTION(BlueprintCallable, Category = "Game State")
 	void endTurn();
 
 	// Hotkey spells
