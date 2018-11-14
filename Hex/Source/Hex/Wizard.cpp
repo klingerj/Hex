@@ -506,7 +506,7 @@ void AWizard::spellOne() {
 		std::get<3>(r) *= 1.2;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 + 0.01 * other->incomingDamageBuff);
 	// If this is a damaging spell and was successfully cast, remove all buffs/debuffs on both players afterwards
 	if (std::get<0>(r) > 0) {
 		this->outgoingDamageBuff = 0;
@@ -557,7 +557,7 @@ void AWizard::spellTwo() {
 		std::get<3>(r) *= 1.2;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 + 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
@@ -603,7 +603,7 @@ void AWizard::spellThree() {
 		std::get<3>(r) *= 1.2;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 + 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
@@ -649,7 +649,7 @@ void AWizard::spellFour() {
 		std::get<3>(r) *= 1.2;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 + 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
@@ -695,7 +695,7 @@ void AWizard::spellFive() {
 		std::get<3>(r) *= 1.2;
 	}
 
-	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 - 0.01 * other->incomingDamageBuff);
+	other->health -= std::get<0>(r) * (1 + 0.01 * this->outgoingDamageBuff) * (1 + 0.01 * other->incomingDamageBuff);
 	if (std::get<0>(r) > 0) {
 		this->outgoingAccuracyBuff = 0;
 		this->outgoingDamageBuff = 0;
