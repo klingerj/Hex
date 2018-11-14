@@ -72,7 +72,16 @@ public:
 	/// STATE VARIABLES
 	WizardClass charClass;
 	// Current stats (modified by spells)
-	int health, speed, outgoingDamageBuff, incomingDamageBuff, outgoingAccuracyBuff;
+  int health, speed;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buffs")
+  int outgoingDamageBuff;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buffs")
+  int incomingDamageBuff;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buffs")
+  int outgoingAccuracyBuff;
 
   UFUNCTION(BlueprintCallable, Category = "Game State")
   int GetHealth() const;
