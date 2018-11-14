@@ -270,7 +270,7 @@ void AGameManager::CastSpell(int i) {
 }
 
 void AGameManager::AddSpellIDToSpellbook(int id) {
-    switch (id) { // TODO: clean this up a lot
+    switch (id - 1) { // TODO: clean this up a lot
     case 0:
     {
         ASpell* craftedSpell = GetWorld()->SpawnActor<AMinorFireDamage>(AMinorFireDamage::StaticClass(), FVector(0, 0, 0), FRotator(0.0f));
