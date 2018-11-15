@@ -5,7 +5,9 @@
 
 # Asset Citations
 Models
-* Trees and crystal deposits: https://www.turbosquid.com/3d-models/blender-carrot-crystal-oak-tree-3d-model-1189852?fbclid=IwAR2ptryQYpKLiYryp4qpvsRf56KFT6u9K07eK6y1_Z4fyjArY_ytCScxDgA
+* Trees and crystal deposits 
+
+https://www.turbosquid.com/3d-models/blender-carrot-crystal-oak-tree-3d-model-1189852?fbclid=IwAR2ptryQYpKLiYryp4qpvsRf56KFT6u9K07eK6y1_Z4fyjArY_ytCScxDgA
 * Wizard asset conceptualized by Nicholas Magarino; modeled, textured, and rigged by Joshua Nadel
 
 Textures
