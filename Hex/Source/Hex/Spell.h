@@ -38,6 +38,7 @@ public:
 	/// PROPERTIES OF ALL SPELLS
 	// Must be unique
 	int id;
+	
 	static int currId;
 
 	// Spell names should probably be unique too
@@ -52,6 +53,7 @@ public:
 	SpellType type;
 
 	// Cooldown
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	int cooldownTurnsRemaining;
 
 	// Member of (0, 100]
@@ -72,6 +74,8 @@ public:
 
 	/// SPELL FUNCTIONS
 	virtual SpellResult cast();
+
+  UFUNCTION(BlueprintCallable, Category = "Spells")
 	virtual int getSpellID();
 
 	/// UTILITY FUNCTIONS

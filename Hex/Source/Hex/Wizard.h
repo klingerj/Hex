@@ -110,7 +110,11 @@ public:
   void showSpellbook();
   int selectedSpell;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	AWizard* other;
+	
 	AGameManager* gm;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
 	AHexGridTile* currentTile; // the tile that the wizard is currently standing on
 };
