@@ -1,5 +1,7 @@
 # Hex
 
+View the trailer [here!](https://vimeo.com/300909972)
+
 # Resources
 * [Djikstra Reference code](https://www.coderslexicon.com/dijkstras-algorithm-for-c/) 
 
